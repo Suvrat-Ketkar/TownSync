@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // bg-gradient-to-b from-[#64abab79] to-sky-100 pt-20
 const HeroSection = () => {
     return (
@@ -18,9 +19,11 @@ const HeroSection = () => {
             </h2>
             
             <div className="flex gap-4 mt-6">
+            <Link to="/report">
                 <button className="h-12 px-6 rounded-full bg-[#2F80ED] text-white font-semibold text-lg shadow-md hover:bg-[#1C66C1] transition-all">
                   Report an issue
                 </button>
+            </Link>
                 <button className="h-12 px-6 rounded-full bg-white text-[#0e141b] font-semibold text-lg shadow-md hover:bg-gray-200 transition-all">
                   Track an issue
                 </button>
