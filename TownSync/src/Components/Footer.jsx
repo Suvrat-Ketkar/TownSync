@@ -3,11 +3,11 @@ import { Facebook, Twitter, Instagram, Mail, Phone, MapPin } from "lucide-react"
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-900 text-gray-300 py-10">
+    <footer className="bg-gradient-to-r from-[#0FA4AF] to-[#0E7490] text-gray-300 py-10">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8">
         {/* Logo & About */}
         <div>
-          <h2 className="text-xl font-semibold text-white mb-4">CivicFeedback</h2>
+          <h2 className="text-xl font-semibold text-white mb-4">TownSync</h2>
           <p className="text-sm">
             A platform to report and track issues in your neighborhood. Help make your community a better place.
           </p>
@@ -56,8 +56,8 @@ const Footer = () => {
       </div>
 
       {/* Copyright */}
-      <div className="mt-8 text-center text-gray-500 text-sm border-t border-gray-700 pt-4">
-        &copy; {new Date().getFullYear()} CivicFeedback. All Rights Reserved.
+      <div className="mt-8 text-center text-gray-500 text-sm border-t border-gray-700 pt-4 bg-gray-400">
+        &copy; {new Date().getFullYear()} TownSync. All Rights Reserved.
       </div>
     </footer>
   );

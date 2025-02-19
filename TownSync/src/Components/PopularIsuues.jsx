@@ -21,52 +21,56 @@ const PopularIssues = () => {
   const scroll = (direction) => {
     setStartIndex((prev) => {
       if (direction === "right") {
-        return (prev + 1) % issues.length; // Wrap around correctly
+        return (prev + 1) % issues.length;
       } else {
-        return (prev - 1 + issues.length) % issues.length; // Ensure no negative index
+        return (prev - 1 + issues.length) % issues.length;
       }
     });
   };
-  
-  return (
-    <div className="w-full bg-gradient-to-b from-sky-100 to-sky-50 py-8">
-      <h1 className="text-2xl font-bold text-center mb-8 text-gray-800">Popular Issues</h1>
 
-      <div className="relative max-w-6xl mx-auto px-6">
+  return (
+    <div className="w-full py-14 bg-sky-100">
+      <h1 className="text-3xl font-extrabold text-center text-gray-900 drop-shadow-md mb-10">
+        🔥 Popular Issues in Your City
+      </h1>
+
+      <div className="relative max-w-6xl mx-auto px-8">
         {/* Scroll Buttons */}
         <button
           onClick={() => scroll("left")}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-14 h-14 flex items-center justify-center bg-white rounded-full shadow-xl hover:bg-gray-200 transition-all border border-gray-300"
           aria-label="Scroll left"
         >
-          <ChevronLeft className="w-6 h-6 text-gray-600" />
+          <ChevronLeft className="w-7 h-7 text-gray-700" />
         </button>
 
         <button
           onClick={() => scroll("right")}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-12 h-12 flex items-center justify-center bg-white rounded-full shadow-lg hover:bg-gray-50 transition-colors border border-gray-200"
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-14 h-14 flex items-center justify-center bg-white rounded-full shadow-xl hover:bg-gray-200 transition-all border border-gray-300"
           aria-label="Scroll right"
         >
-          <ChevronRight className="w-6 h-6 text-gray-600" />
+          <ChevronRight className="w-7 h-7 text-gray-700" />
         </button>
 
         {/* Rotating Cards */}
-        <div className="flex overflow-hidden w-full justify-center items-center">
+        <div className="flex overflow-hidden w-full justify-center items-center gap-6">
           {visibleIssues.map((issue, index) => (
             <div
               key={index}
-              className="w-1/3 px-3 transform transition-transform duration-500 ease-in-out"
+              className="w-1/3 px-4 transform transition-transform duration-500 ease-in-out hover:scale-105"
             >
-              <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-                <div className="relative w-full h-56">
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-all">
+                <div className="relative w-full h-64">
                   <div
-                    className="absolute inset-0 bg-center bg-cover"
-                    style={{ backgroundImage: `url(https://cdn.usegalileo.ai/sdxl10/${issue.img})` }}
+                    className="absolute inset-0 bg-center bg-cover transition-opacity duration-500"
+                    style={{
+                      backgroundImage: `linear-gradient(to bottom, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.5)), url(https://cdn.usegalileo.ai/sdxl10/${issue.img})`,
+                    }}
                   />
                 </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-800">{issue.name}</h3>
-                  <p className="text-sm text-blue-600">{issue.reports.toLocaleString()} reports</p>
+                <div className="p-6 text-center">
+                  <h3 className="text-xl font-bold text-gray-800">{issue.name}</h3>
+                  <p className="text-md text-blue-600 font-medium">{issue.reports.toLocaleString()} reports</p>
                 </div>
               </div>
             </div>

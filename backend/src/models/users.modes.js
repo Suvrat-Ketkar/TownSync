@@ -4,11 +4,9 @@ import bcrypt from "bcrypt";
 
 const userSchema = new Schema(
   {
-    username: {
+    current_address: {
       type: String,
       required: true,
-      unique: true,
-      lowercase: true,
       trim: true,
       index: true,
     },
@@ -19,13 +17,12 @@ const userSchema = new Schema(
       lowercase: true,
       trim: true,
     },
-
     fullName: {
       type: String,
       required: true,
       trim: true,
     },
-    // avatar: {
+    // uploaded_image : {
     //   type: String,
     //   default:
     //     "https://res.cloudinary.com/dj7k9b8ps/image/upload/v1631010670/avatars/avatar-1_ukz0xh.png",

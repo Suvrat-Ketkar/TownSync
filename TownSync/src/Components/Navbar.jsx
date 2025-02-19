@@ -1,19 +1,40 @@
 import React from "react";
-const Navbar = () => {
-    return (
-      <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e8edf3] px-10 py-5 bg-[#0FA4AF]">
-        <div className="flex items-center gap-4 text-[#0e141b]">
-          <h2 className="text-[#0e141b] text-lg font-bold leading-tight tracking-[-0.015em]">TownSync</h2>
-        </div>
-        <div className="flex flex-1 justify-end gap-8">
-          <div className="flex items-center gap-9">
-            <a className="text-[#0e141b] text-sm font-medium leading-normal" href="#">Report Issue</a>
-            <a className="text-[#0e141b] text-sm font-medium leading-normal" href="#">Track Issue</a>
-            <a className="text-[#0e141b] text-sm font-medium leading-normal" href="#">Login</a>
-          </div>
-        </div>
-      </header>
-    );
-  };
 
-  export default Navbar;
+const Navbar = () => {
+  return (
+    <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-10 py-3 bg-gradient-to-r from-[#0FA4AF] to-[#0E7490] shadow-lg">
+      {/* Logo Section */}
+      <div className="flex items-center gap-4">
+        <h2 className="text-white text-2xl font-extrabold tracking-wide">TownSync</h2>
+      </div>
+
+      {/* Navigation Links */}
+      <nav className="flex items-center gap-8">
+        <a
+          href="#"
+          className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]"
+        >
+          Report Issue
+        </a>
+        <a
+          href="#"
+          className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]"
+        >
+          Track Issue
+        </a>
+      </nav>
+
+      {/* Right Side (Login Button) */}
+      <div>
+        <a
+          href="#"
+          className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg"
+        >
+          Login
+        </a>
+      </div>
+    </header>
+  );
+};
+
+export default Navbar;
