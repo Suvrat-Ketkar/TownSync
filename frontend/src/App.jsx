@@ -5,40 +5,23 @@ import HeroSection from './Components/Herosection.jsx'
 import PopularIssues from './Components/PopularIssues.jsx'
 import Footer from './Components/Footer.jsx'
 import ReportIssue from "./Components/ReportIssue.jsx";
+import Login from "./Components/Login.jsx";
+import Register from "./Components/Registration.jsx";
 
-// const App = () => {
-//   return (
-//     <Router>
-//       <Navbar />
-//       <Routes>
-//         {/* Home Page */}
-//         <Route path="/" element={
-//           <>
-//             <HeroSection />
-//             <PopularIssues />
-//           </>
-//         } />
-        
-//         {/* Report Issue Page */}
-//         <Route path="/report" element={<ReportIssue />} />
-
-//       </Routes>
-//       <Footer />
-//     </Router>
-//   );
-// };
-
-// export default App;
 const App = () => {
   return (
     <Router>
       <Navbar />
       <Routes>
-        <Route path="/" element={<>
-          <HeroSection />
-          <PopularIssues />
-        </>} />
+        <Route path="/" element={
+          <>
+            <HeroSection />
+            <PopularIssues />
+          </>
+        } />
         <Route path="/report" element={<ReportIssue />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
       </Routes>
       <Footer />
     </Router>
