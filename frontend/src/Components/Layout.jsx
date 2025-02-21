@@ -1,13 +1,13 @@
 import React from "react";
-import Navbar from "./Navbar"; // Import your Navbar component
-import Footer from "./Footer"; // Import your Footer component
-import { Outlet } from "react-router-dom"; // Outlet renders the child routes
+import Navbar from "./Navbar"; 
+import Footer from "./Footer"; 
+import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   return (
     <div>
       <Navbar />
-      <main className="min-h-screen">
+      <main className="min-h-screen bg-gradient-to-b from-[#0FA4AF] to-sky-100">
         <Outlet />
       </main>
       <Footer />

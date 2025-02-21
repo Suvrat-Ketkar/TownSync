@@ -7,6 +7,9 @@ import Footer from './Components/Footer.jsx'
 import ReportIssue from "./Components/ReportIssue.jsx";
 import Login from "./Components/Login.jsx";
 import Register from "./Components/Registration.jsx";
+import ComplaintsTracking from "./Components/Complaints.jsx";
+import Complaints from "./Complaints.jsx";
+import TopIssues from "./Components/TopIssues.jsx";
 
 const App = () => {
   return (
@@ -22,6 +25,8 @@ const App = () => {
         <Route path="/report" element={<ReportIssue />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/complaint" element={<Complaints />} />
+        <Route path="/all" element={<TopIssues />} />
       </Routes>
       <Footer />
     </Router>

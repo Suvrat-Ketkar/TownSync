@@ -14,19 +14,19 @@ const Navbar = () => {
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-8">
-        <a href="#" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
-          Report Issue
-        </a>
-        <a href="#" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
+        <Link to="/" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
+          Home
+        </Link>
+        <Link to = "/complaint" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
           Track Issue
-        </a>
+        </Link>
       </nav>
 
       {/* Login Button (Visible on Desktop) */}
       <div className="hidden md:block">
-        <a href="#" className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg">
-          Login
-        </a>
+        <Link to="/login" className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg ">
+        Login
+        </Link>
       </div>
 
       {/* Mobile Menu Button */}
