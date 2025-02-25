@@ -24,9 +24,11 @@ const HeroSection = () => {
                 Report an issue
               </button>
             </Link>
+            <Link to = "/detail">
             <button className="h-12 px-6 rounded-full bg-white text-[#0e141b] font-semibold text-lg shadow-md hover:bg-gray-200 transition-all">
               Track an issue
             </button>
+            </Link>
           </div> 
         </div> 
       </div>

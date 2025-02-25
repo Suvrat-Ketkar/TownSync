@@ -62,11 +62,11 @@ function TopIssues() {
         { id: 3, title: "Garbage Overflow", reports: 32, severity: "medium", location: "0.3 mi away", lastReported: "2025-02-20" },
         { id: 4, title: "Water Leakage", reports: 29, severity: "high", location: "2 mi away", lastReported: "2025-02-18" },
         { id: 5, title: "Traffic Signal Failure", reports: 25, severity: "high", location: "0.8 mi away", lastReported: "2025-02-20" },
-        { id: 6, title: "Sidewalk Damage", reports: 22, severity: "medium", location: "1.2 mi away", lastReported: "2025-02-19" },
-        { id: 7, title: "Noise Pollution", reports: 19, severity: "low", location: "0.7 mi away", lastReported: "2025-02-17" },
-        { id: 8, title: "Street Flooding", reports: 16, severity: "high", location: "1.5 mi away", lastReported: "2025-02-20" },
-        { id: 9, title: "Abandoned Vehicles", reports: 14, severity: "low", location: "0.9 mi away", lastReported: "2025-02-18" },
-        { id: 10, title: "Graffiti", reports: 12, severity: "low", location: "1.1 mi away", lastReported: "2025-02-19" },
+        // { id: 6, title: "Sidewalk Damage", reports: 22, severity: "medium", location: "1.2 mi away", lastReported: "2025-02-19" },
+        // { id: 7, title: "Noise Pollution", reports: 19, severity: "low", location: "0.7 mi away", lastReported: "2025-02-17" },
+        // { id: 8, title: "Street Flooding", reports: 16, severity: "high", location: "1.5 mi away", lastReported: "2025-02-20" },
+        // { id: 9, title: "Abandoned Vehicles", reports: 14, severity: "low", location: "0.9 mi away", lastReported: "2025-02-18" },
+        // { id: 10, title: "Graffiti", reports: 12, severity: "low", location: "1.1 mi away", lastReported: "2025-02-19" },
       ];
       setIssues(mockResponse);
       setLoading(false);
@@ -87,9 +87,9 @@ function TopIssues() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0FA4AF] to-sky-100 font-sans antialiased">
+    <div className="min-h-screen bg-gradient-to-b from-[#0FA4AF] to-sky-100 font-sans antialiased mt-8">
       {/* Header */}
-      <header className="">
+      {/* <header className="">
         <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -107,7 +107,7 @@ function TopIssues() {
             </nav>
           </div>
         </div>
-      </header>
+      </header> */}
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

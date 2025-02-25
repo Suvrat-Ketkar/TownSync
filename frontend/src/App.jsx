@@ -10,7 +10,7 @@ import Register from "./Components/Registration.jsx";
 import ComplaintsTracking from "./Components/Complaints.jsx";
 import Complaints from "./Complaints.jsx";
 import TopIssues from "./Components/TopIssues.jsx";
-
+import ComplaintDetails from "./Components/ComplaintDetails.jsx";
 const App = () => {
   return (
     <Router>
@@ -26,6 +26,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/complaint" element={<Complaints />} />
+        <Route path="/detail" element={<ComplaintDetails />} />
         <Route path="/all" element={<TopIssues />} />
       </Routes>
       <Footer />
