@@ -3,59 +3,73 @@ import AutoIncrement from "mongoose-sequence";
 
 const complaintSchema = new Schema(
   {
-    complaint_ID: {
-      type: Number, 
-      required: true,
+    complaintId: {
+      type: Number,
       unique: true,
     },
-    Issue_Type: {
-        type: String,
-        required: true,
-        trim: true,
-        enum: ["Potholes", "Street Lights", "Garbage Collection", "Water Supply", "Electricity Issues", "Other"], // Match the dropdown options
-      },
-    Issue_Description: {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Foreign key reference to the User model
+      required: true,
+    },
+    issueType: {
+      type: String,
+      required: true,
+      trim: true,
+      enum: [
+        "Potholes",
+        "Street Lights",
+        "Garbage Collection",
+        "Water Supply",
+        "Electricity Issues",
+        "Other",
+      ], // Match dropdown options
+    },
+    customIssueType: {
+      type: String,
+      trim: true,
+      default: null, // Optional field for custom issue type
+    },
+    issueDescription: {
       type: String,
       required: true,
       trim: true,
     },
-    Location: {
+    location: {
       type: String,
       required: true,
       trim: true,
     },
-    Status: {
-      type: String,
-      required: true,
-      trim: true,
-      enum: ["Approved", "Pending", "Rejected"], 
-      default: "Pending",
+    coordinates: {
+      type: { type: String, default: "Point" },
+      coordinates: { type: [Number], required: true }, // [longitude, latitude]
     },
-    Image: {
+    imageUrl: {
       type: String,
       required: true,
       trim: true,
     },
-    Date_of_report: {
+    status: {
+      type: String,
+      required: true,
+      trim: true,
+      enum: ["open", "in-progress", "closed"],
+      default: "open",
+    },
+    closedAt: {
       type: Date,
-      required: true,
-      default: Date.now, 
+      default: null, // Set when status is changed to "closed"
     },
-    // if others is selected 
-    Custom_Issue_Type: {
-        type: String,
-        trim: true,
-        default: null, // Optional field
-      },
   },
   {
-    timestamps: true
+    timestamps: true, // Adds createdAt and updatedAt timestamps automatically
   }
 );
 
-complaintSchema.plugin(AutoIncrement, { 
-  inc_field: "complaint_ID", 
-  start_seq: 1000, 
+// Auto-increment complaintId starting from 1000
+complaintSchema.plugin(AutoIncrement(mongoose), {
+  inc_field: "complaintId",
+  start_seq: 1000,
 });
 
 const Complaint = mongoose.model("Complaint", complaintSchema);
