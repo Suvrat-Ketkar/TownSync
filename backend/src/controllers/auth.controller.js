@@ -1,4 +1,4 @@
-import {User }from "../models/users.modes.js";
+import { User }from "../models/users.modes.js";
 
 export async function registerUser(req, res) {
     try {
