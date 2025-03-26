@@ -133,3 +133,4 @@ dist
 
 /images
 .vercel
+/public/uploads
