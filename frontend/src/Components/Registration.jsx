@@ -15,10 +15,31 @@ const Register = () => {
 
   const password = watch("password");
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
+  try {
     console.log('Form submitted:', data);
-    setSubmitStatus({ type: 'success', message: 'Registration successful!' });
-  };
+
+    const response = await fetch('http://localhost:3500/api/v1/user-register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      setSubmitStatus({ type: 'success', message: 'Registration successful!' });
+    } else {
+      setSubmitStatus({ type: 'error', message: result.message || 'Registration failed!' });
+    }
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    setSubmitStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0FA4AF] to-sky-100 px-4 sm:px-6 lg:px-8 py-8 mt-9">

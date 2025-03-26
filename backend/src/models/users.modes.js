@@ -54,12 +54,12 @@ userSchema.methods.generateAccessToken = function(){
         {
             _id: this._id,
             email: this.email,
-            username: this.username,
+            // username: this.username,
             fullName: this.fullName
         },
-        process.env.ACCESS_TOKEN_SECRET,
+        process.env.JWT_SECRET,
         {
-            expiresIn: process.env.ACCESS_TOKEN_EXPIRY
+            expiresIn: process.env.JWT_EXPIRY
         }
     )
 }
@@ -69,9 +69,9 @@ userSchema.methods.generateRefreshToken = function(){
             _id: this._id,
             
         },
-        process.env.REFRESH_TOKEN_SECRET,
+        process.env.JWT_SECRET,
         {
-            expiresIn: process.env.REFRESH_TOKEN_EXPIRY
+            expiresIn: process.env.JWT_EXPIRY
         }
     )
 }

@@ -11,26 +11,32 @@ import ComplaintsTracking from "./Components/Complaints.jsx";
 import Complaints from "./Complaints.jsx";
 import TopIssues from "./Components/TopIssues.jsx";
 import ComplaintDetails from "./Components/ComplaintDetails.jsx";
+import Profile from "./Components/Profile.jsx";
+import { AuthProvider } from "./context/AuthContext.jsx";
+
 const App = () => {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-        <Route path="/" element={
-          <>
-            <HeroSection />
-            <PopularIssues />
-          </>
-        } />
-        <Route path="/report" element={<ReportIssue />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/complaint" element={<Complaints />} />
-        <Route path="/detail" element={<ComplaintDetails />} />
-        <Route path="/all" element={<TopIssues />} />
-      </Routes>
-      <Footer />
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={
+            <>
+              <HeroSection />
+              <PopularIssues />
+            </>
+          } />
+          <Route path="/report" element={<ReportIssue />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/complaint" element={<Complaints />} />
+          <Route path="/detail" element={<ComplaintDetails />} />
+          <Route path="/all" element={<TopIssues />} />
+          <Route path="/profile" element={<Profile />} />
+        </Routes>
+        <Footer />
+      </Router>
+    </AuthProvider>
   );
 };
 

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const Login = () => {
   const {
@@ -10,12 +11,58 @@ const Login = () => {
     formState: { errors },
   } = useForm();
 
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({ type: '', message: '' });
+  const [isLoading, setIsLoading] = useState(false);
 
-  const onSubmit = (data) => {
-    console.log('Form submitted:', data);
-    setSubmitStatus({ type: 'success', message: 'Login successful!' });
+  const onSubmit = async (data) => {
+    try {
+      setIsLoading(true);
+      console.log('Form submitted:', data);
+      
+      const response = await fetch('http://localhost:3500/api/v1/user-login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      });
+
+      const result = await response.json();
+      console.log('Login API response:', result); // Debug API response
+
+      if (response.ok) {
+        setSubmitStatus({ type: 'success', message: 'Login successful!' });
+        
+        // Don't add Bearer prefix when saving to localStorage
+        const accessToken = result.accessToken;
+        
+        console.log('Access token to be saved:', accessToken); // Debug token
+        
+        // Use the context's login function
+        login(
+          { email: data.email }, 
+          { 
+            accessToken: accessToken, 
+            refreshToken: result.refreshToken 
+          }
+        );
+        
+        // Redirect to home page after successful login
+        setTimeout(() => {
+          navigate('/');
+        }, 1000);
+      } else {
+        setSubmitStatus({ type: 'error', message: result.message || 'Login failed!' });
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
+      setSubmitStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -76,8 +123,9 @@ const Login = () => {
           <button
             type="submit"
             className="w-full bg-gradient-to-r from-[#0FA4AF] to-[#0E7490] hover:from-[#0E7490] hover:to-[#0FA4AF] text-white font-semibold py-3 sm:py-3.5 rounded-lg shadow-md transition duration-300"
+            disabled={isLoading}
           >
-            Sign in
+            {isLoading ? 'Signing in...' : 'Sign in'}
           </button>
         </form>
 

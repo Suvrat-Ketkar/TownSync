@@ -1,9 +1,17 @@
 import React, { useState } from "react";
-import { Menu, X } from "lucide-react"; // Icons for mobile menu
-import { Link } from 'react-router-dom';
+import { Menu, X, UserCircle, LogOut } from "lucide-react"; // Added icons for user profile
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
 
   return (
     <header className="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 md:px-10 py-3 bg-gradient-to-r from-[#0FA4AF] to-[#0E7490] shadow-lg">
@@ -22,11 +30,27 @@ const Navbar = () => {
         </Link>
       </nav>
 
-      {/* Login Button (Visible on Desktop) */}
-      <div className="hidden md:block">
-        <Link to="/login" className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg ">
-        Login
-        </Link>
+      {/* Login/Profile Button (Visible on Desktop) */}
+      <div className="hidden md:flex items-center gap-4">
+        {user ? (
+          <>
+            <Link to="/profile" className="flex items-center gap-2 text-white hover:text-[#FFD700] transition-colors duration-300">
+              <UserCircle className="w-5 h-5" />
+              <span>Profile</span>
+            </Link>
+            <button 
+              onClick={handleLogout}
+              className="flex items-center gap-2 bg-white text-[#0E7490] px-4 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
+            </button>
+          </>
+        ) : (
+          <Link to="/login" className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg">
+            Login
+          </Link>
+        )}
       </div>
 
       {/* Mobile Menu Button */}
@@ -37,15 +61,35 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="absolute top-14 left-0 w-full bg-[#0E7490] shadow-lg flex flex-col items-center py-4 space-y-4 md:hidden">
-          <a href="#" className="text-white text-lg font-semibold" onClick={() => setIsOpen(false)}>
-            Report Issue
-          </a>
-          <a href="#" className="text-white text-lg font-semibold" onClick={() => setIsOpen(false)}>
+          <Link to="/" className="text-white text-lg font-semibold" onClick={() => setIsOpen(false)}>
+            Home
+          </Link>
+          <Link to="/complaint" className="text-white text-lg font-semibold" onClick={() => setIsOpen(false)}>
             Track Issue
-          </a>
-          <a href="#" className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg" onClick={() => setIsOpen(false)}>
-            Login
-          </a>
+          </Link>
+          
+          {user ? (
+            <>
+              <Link to="/profile" className="flex items-center gap-2 text-white hover:text-[#FFD700]" onClick={() => setIsOpen(false)}>
+                <UserCircle className="w-5 h-5" />
+                <span>Profile</span>
+              </Link>
+              <button 
+                onClick={() => {
+                  handleLogout();
+                  setIsOpen(false);
+                }}
+                className="flex items-center gap-2 bg-white text-[#0E7490] px-4 py-2 rounded-full font-semibold text-base shadow-md"
+              >
+                <LogOut className="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            </>
+          ) : (
+            <Link to="/login" className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md" onClick={() => setIsOpen(false)}>
+              Login
+            </Link>
+          )}
         </div>
       )}
     </header>

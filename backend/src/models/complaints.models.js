@@ -1,12 +1,22 @@
-import mongoose, { Schema } from "mongoose";
-import AutoIncrement from "mongoose-sequence";
+import { Schema } from "mongoose";
+import mongoose from 'mongoose';
+import _AutoIncrement from 'mongoose-sequence';
+
+const AutoIncrement = _AutoIncrement(mongoose);
+
+
 
 const complaintSchema = new Schema(
   {
     complaint_ID: {
       type: Number, 
-      required: true,
+      // required: true,
       unique: true,
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true
     },
     Issue_Type: {
         type: String,
@@ -20,15 +30,23 @@ const complaintSchema = new Schema(
       trim: true,
     },
     Location: {
+      type: {
+        type: String,
+        default: 'Point',
+        required: true
+      },
+      coordinates : [Number]
+    },
+    address: {
       type: String,
       required: true,
-      trim: true,
+      trim: true
     },
     Status: {
       type: String,
       required: true,
       trim: true,
-      enum: ["Approved", "Pending", "Rejected"], 
+      enum: ["Pending", "Rejected", "In Progress", "Resolved"], 
       default: "Pending",
     },
     Image: {
@@ -47,11 +65,22 @@ const complaintSchema = new Schema(
         trim: true,
         default: null, // Optional field
       },
+    upvotes: {
+      type: Number,
+      default: 0
+    },
+    upvotedBy: [{
+      type: Schema.Types.ObjectId,
+      ref: "User"
+    }]
   },
   {
     timestamps: true
   }
 );
+
+// Add 2dsphere index for geospatial queries
+complaintSchema.index({ Location: "2dsphere" });
 
 complaintSchema.plugin(AutoIncrement, { 
   inc_field: "complaint_ID", 

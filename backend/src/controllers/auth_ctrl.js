@@ -1,12 +1,12 @@
-import {User }from "../models/users.modes.js";
+import { User }from "../models/users.modes.js";
 
 export async function registerUser(req, res) {
     try {
-        const { username, email, fullName, password } = req.body;
-        if (!username || !email || !fullName || !password) {
+        const { current_address, email, fullName, password } = req.body;
+        if (!current_address || !email || !fullName || !password) {
             return res.status(400).json({ message: "All fields are required" });
         }
-        const user = await User.create({ username, email, fullName, password });
+        const user = await User.create({ current_address, email, fullName, password });
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
 
@@ -36,7 +36,27 @@ export async function loginUser(req,res,next){
             return res.status(401).json({message: "Invalid credentials"});
         }
 
+        const isPasswordValid = await user.isPasswordCorrect(password);
+        if (!isPasswordValid) {
+            return res.status(401).json({message: "Invalid credentials"});
+        }
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken();
 
+        user.refreshToken = refreshToken;
+        await user.save();
+
+        return res.status(200).json({
+            message: "Login successful",
+            user: {
+                _id: user._id,
+                email: user.email,
+                fullName: user.fullName
+            },
+            accessToken,
+            refreshToken
+        });
+        console.log(user);
     }
     catch(err){
         console.error("Error logging in user:", err);
