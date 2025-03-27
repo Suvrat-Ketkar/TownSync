@@ -1,4 +1,5 @@
 import { User }from "../models/users.modes.js";
+import { updateStatsOnNewUser } from "./statisticsController.js";
 
 export async function registerUser(req, res) {
     try {
@@ -12,6 +13,9 @@ export async function registerUser(req, res) {
 
         user.refreshToken = refreshToken;
         await user.save(); 
+        
+        // Update statistics for new user registration
+        await updateStatsOnNewUser();
 
         res.status(201).json({
             message: "User registered successfully",

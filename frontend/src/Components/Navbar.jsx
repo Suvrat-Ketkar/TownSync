@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, X, UserCircle, LogOut } from "lucide-react"; // Added icons for user profile
+import { Menu, X, UserCircle, LogOut, BarChart2 } from "lucide-react"; // Added chart icon
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -25,9 +25,14 @@ const Navbar = () => {
         <Link to="/" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
           Home
         </Link>
-        <Link to = "/complaint" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
+        <Link to="/complaint" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
           Track Issue
         </Link>
+        {user && (
+          <Link to="/statistics" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
+            Statistics
+          </Link>
+        )}
       </nav>
 
       {/* Login/Profile Button (Visible on Desktop) */}
@@ -67,6 +72,13 @@ const Navbar = () => {
           <Link to="/complaint" className="text-white text-lg font-semibold" onClick={() => setIsOpen(false)}>
             Track Issue
           </Link>
+          
+          {user && (
+            <Link to="/statistics" className="text-white text-lg font-semibold flex items-center gap-2" onClick={() => setIsOpen(false)}>
+              <BarChart2 className="w-5 h-5" />
+              <span>Statistics</span>
+            </Link>
+          )}
           
           {user ? (
             <>

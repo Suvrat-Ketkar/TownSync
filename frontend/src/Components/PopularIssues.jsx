@@ -31,7 +31,7 @@ const PopularIssues = () => {
   return (
     <div className="w-full py-14 bg-sky-100">
       <h1 className="text-3xl font-extrabold text-center text-gray-900 drop-shadow-md mb-10">
-        🔥 Popular Issues in Your City
+         Popular Issues in Your City
       </h1>
 
       <div className="relative max-w-6xl mx-auto px-6 sm:px-8">

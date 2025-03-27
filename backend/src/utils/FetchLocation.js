@@ -12,6 +12,6 @@ const getCoordinates = async (address) => {
       return { type: "Point", coordinates: [lng, lat] }; // GeoJSON format
     } catch (error) {
       console.error("Geocoding error:", error);
-      return null;
-    }
+      return null;
+    }
   };

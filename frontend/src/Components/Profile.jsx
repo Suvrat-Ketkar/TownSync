@@ -22,7 +22,7 @@ const Profile = () => {
         <div className="bg-gradient-to-r from-[#0FA4AF] to-[#0E7490] px-6 py-8 text-center">
           <div className="inline-block bg-white p-2 rounded-full mb-4">
             <div className="bg-gray-200 h-24 w-24 rounded-full flex items-center justify-center">
-              <span className="text-4xl text-gray-500 font-semibold">
+              <span className="text-4xl text-blue-500 font-semibold">
                 {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
               </span>
             </div>

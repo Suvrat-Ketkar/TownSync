@@ -195,7 +195,7 @@ const ComplaintDetails = () => {
         <div className="mt-8 text-center">
           <Link 
             to="/complaint" 
-            className="bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-all duration-300 transform hover:scale-105 animate-bounceOnce"
+            className="bg-[#0FA4AF] text-white px-6 py-3 rounded-lg font-semibold hover:bg-[#0E7490] transition-all duration-300 transform hover:scale-105 animate-bounceOnce"
           >
             Back to Complaints
           </Link>

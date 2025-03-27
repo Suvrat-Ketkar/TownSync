@@ -26,7 +26,7 @@ const HeroSection = () => {
             </Link>
             <Link to = "/detail">
             <button className="h-12 px-6 rounded-full bg-white text-[#0e141b] font-semibold text-lg shadow-md hover:bg-gray-200 transition-all">
-              Track an issue
+              Near By Issues
             </button>
             </Link>
           </div> 

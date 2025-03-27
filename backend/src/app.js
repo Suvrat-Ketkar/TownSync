@@ -4,6 +4,8 @@ import cookieParser from "cookie-parser"
 import userRouter from './routes/users.routes.js';
 import complaintRouter from './routes/complaint.routes.js';
 import { errorHandler } from './middleware/errorHandler.middleware.js';
+import cron from 'node-cron';
+import { generateDailyStatistics } from './controllers/statisticsController.js';
 
 const app = express();
 
@@ -22,6 +24,17 @@ app.use(cookieParser())
 
 app.use('/api/v1', userRouter);
 app.use('/api/v1/complaints', complaintRouter);
+
+// Schedule job to run at midnight every day
+cron.schedule('0 0 * * *', async () => {
+  console.log('Running daily statistics generation job');
+  try {
+    await generateDailyStatistics();
+    console.log('Daily statistics generated successfully');
+  } catch (error) {
+    console.error('Error generating daily statistics:', error);
+  }
+});
 
 // Error handler (should be the last middleware)
 app.use(errorHandler);

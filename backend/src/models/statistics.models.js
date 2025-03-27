@@ -1,18 +1,13 @@
-import mongoose, { Schema } from "mongoose";
+import { Schema, model } from "mongoose";
 
 const statisticsSchema = new Schema(
   {
     date: {
       type: Date,
       required: true,
-      default: Date.now,
-      index: true
+      unique: true
     },
     totalComplaints: {
-      type: Number,
-      default: 0
-    },
-    resolvedComplaints: {
       type: Number,
       default: 0
     },
@@ -20,11 +15,15 @@ const statisticsSchema = new Schema(
       type: Number,
       default: 0
     },
-    rejectedComplaints: {
+    inProgressComplaints: {
       type: Number,
       default: 0
     },
-    inProgressComplaints: {
+    resolvedComplaints: {
+      type: Number,
+      default: 0
+    },
+    rejectedComplaints: {
       type: Number,
       default: 0
     },
@@ -43,25 +42,20 @@ const statisticsSchema = new Schema(
     areaWiseDistribution: {
       type: Map,
       of: Number,
-      default: {}
-    },
-    userGrowth: {
-      type: Number,
-      default: 0
+      default: () => new Map()
     },
     totalUsers: {
       type: Number,
       default: 0
+    },
+    userGrowth: {
+      type: Number,
+      default: 0
     }
   },
-  {
-    timestamps: true
-  }
+  { timestamps: true }
 );
 
-// Create index for efficient date-based queries
-statisticsSchema.index({ date: 1 });
-
-const Statistics = mongoose.model("Statistics", statisticsSchema);
+const Statistics = model("Statistics", statisticsSchema);
 
 export default Statistics; 

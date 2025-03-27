@@ -12,6 +12,7 @@ import Complaints from "./Complaints.jsx";
 import TopIssues from "./Components/TopIssues.jsx";
 import ComplaintDetails from "./Components/ComplaintDetails.jsx";
 import Profile from "./Components/Profile.jsx";
+import StatisticsDashboard from "./Components/StatisticsDashboard.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
 
 const App = () => {
@@ -33,6 +34,7 @@ const App = () => {
           <Route path="/detail/:complaintId" element={<ComplaintDetails />} />
           <Route path="/all" element={<TopIssues />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/statistics" element={<StatisticsDashboard />} />
         </Routes>
         <Footer />
       </Router>

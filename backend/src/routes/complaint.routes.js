@@ -6,9 +6,10 @@ import { Router } from "express";
 //   upvoteComplaint
 // } from "../controllers/reportIssue_ctrl.js";
 
-import {reportComplaint, DisplayComplaintsByUser, complaintDetailPage} from '../controllers/complaintController.js';
+import {reportComplaint, DisplayComplaintsByUser, complaintDetailPage, updateComplaintStatus, getAllComplaints} from '../controllers/complaintController.js';
 import {authenticateUser} from "../middleware/auth.js";
 import { upload } from "../middleware/multer.middleware.js";
+import { getStatistics, generateDailyStatistics } from "../controllers/statisticsController.js";
 
 const complaintRouter = Router();
 
@@ -27,6 +28,18 @@ complaintRouter.get("/user", DisplayComplaintsByUser);
 
 // Get details of a specific complaint
 complaintRouter.get("/details/:id", complaintDetailPage);
+
+// Update complaint status
+complaintRouter.patch("/status/:id", updateComplaintStatus);
+
+// Get all complaints (with optional filters)
+complaintRouter.get("/all", getAllComplaints);
+
+// Get statistics (with optional date range)
+complaintRouter.get("/statistics", getStatistics);
+
+// Generate daily statistics report (could be triggered by cron job)
+complaintRouter.post("/statistics/generate", generateDailyStatistics);
 
 // // Upvote a complaint
 // complaintRouter.post("/upvote/:complaintId", upvoteComplaint);
