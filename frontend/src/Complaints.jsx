@@ -1,19 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
-function ComplaintItem({ icon, title, date, status }) {
-  const isInProgress = status === 'in-progress';
+function ComplaintItem({ icon, title, date, status, id }) {
+  const isInProgress = status !== 'completed';
   const Icon = isInProgress ? WrenchIcon : CheckCircleIcon;
 
   return (
-    <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow ">
-      <div className={`flex items-center justify-center w-12 h-12 rounded-lg ${isInProgress ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
-        <Icon />
+    <Link to={`/detail/${id}`} className="block transition-transform hover:scale-[1.01]">
+      <div className="flex items-center gap-4 p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+        <div className={`flex items-center justify-center w-12 h-12 rounded-lg ${isInProgress ? 'bg-blue-100 text-blue-600' : 'bg-green-100 text-green-600'}`}>
+          <Icon />
+        </div>
+        <div className="flex flex-col">
+          <p className="text-base font-medium text-gray-900">{title}</p>
+          <p className="text-sm text-gray-500">{date}</p>
+        </div>
       </div>
-      <div className="flex flex-col">
-        <p className="text-base font-medium text-gray-900">{title}</p>
-        <p className="text-sm text-gray-500">{date}</p>
-      </div>
-    </div>
+    </Link>
   );
 }
 
@@ -34,15 +38,106 @@ function CheckCircleIcon() {
 }
 
 function Complaints() {
-  const complaints = [
-    { title: "New pothole at 123 Main St", date: "May 1, 2023", status: "in-progress" },
-    { title: "Loud music at 456 Elm St", date: "Apr 30, 2023", status: "in-progress" },
-    { title: "Graffiti at 789 Oak St", date: "Apr 29, 2023", status: "completed" },
-    { title: "Broken streetlight at 101 Pine St", date: "Apr 28, 2023", status: "completed" },
-  ];
+  const [complaints, setComplaints] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const inProgress = complaints.filter(c => c.status === 'in-progress');
-  const completed = complaints.filter(c => c.status === 'completed');
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        // Get the auth token from localStorage using the correct key
+        const token = localStorage.getItem('accessToken');
+        
+        console.log("Using token:", token ? `${token.substring(0, 10)}...` : "No token found");
+        
+        if (!token) {
+          setError('Authentication required - please log in');
+          setLoading(false);
+          return;
+        }
+        
+        // Get the API base URL from environment variables
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+        console.log("API Base URL:", apiBaseUrl);
+        
+        // Include the token in the request headers
+        // Format with Bearer prefix if not already present
+        const authToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+        
+        const response = await axios.get(`${apiBaseUrl}/api/v1/complaints/user`, {
+          headers: {
+            Authorization: authToken
+          }
+        });
+        
+        console.log("API Response:", response);
+        
+        if (response.data.success) {
+          setComplaints(response.data.data);
+          console.log("Complaints loaded:", response.data.data);
+        } else {
+          setError('Failed to fetch complaints: ' + response.data.message);
+          console.error("API Error:", response.data);
+        }
+      } catch (error) {
+        console.error('Error fetching complaints:', error);
+        setError(`Failed to fetch complaints: ${error.response?.data?.message || error.message}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchComplaints();
+  }, []);
+
+  // Format complaints for display
+  const formattedComplaints = complaints.map(complaint => {
+    console.log("Processing complaint:", complaint);
+    return {
+      id: complaint._id,
+      title: complaint.Issue_Description || 'No Description',
+      date: complaint.Date_of_report 
+        ? new Date(complaint.Date_of_report).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+          })
+        : new Date(complaint.createdAt).toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'short', 
+            day: 'numeric' 
+          }),
+      status: complaint.Status ? complaint.Status.toLowerCase() : 'in-progress'
+    };
+  });
+
+  // Map status values to our display categories
+  const inProgress = formattedComplaints.filter(c => 
+    c.status === 'pending' || c.status === 'in progress' || c.status === 'in-progress'
+  );
+  const completed = formattedComplaints.filter(c => 
+    c.status === 'resolved' || c.status === 'completed'
+  );
+
+  if (loading) {
+    return (
+      <main className="flex-1 px-4 md:px-40 py-20">
+        <div className="max-w-4xl mx-auto text-center">
+          <p>Loading complaints...</p>
+        </div>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="flex-1 px-4 md:px-40 py-20">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-red-500">{error}</p>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex-1 px-4 md:px-40 py-20">
@@ -51,20 +146,28 @@ function Complaints() {
         
         <section className="mb-8">
           <h3 className="text-xl font-bold text-gray-900 mb-4">In progress</h3>
-          <div className="space-y-4">
-            {inProgress.map((complaint, index) => (
-              <ComplaintItem key={index} {...complaint} />
-            ))}
-          </div>
+          {inProgress.length === 0 ? (
+            <p className="text-gray-500">No complaints in progress</p>
+          ) : (
+            <div className="space-y-4">
+              {inProgress.map((complaint, index) => (
+                <ComplaintItem key={index} {...complaint} />
+              ))}
+            </div>
+          )}
         </section>
 
         <section>
           <h3 className="text-xl font-bold text-gray-900 mb-4">Completed</h3>
-          <div className="space-y-4">
-            {completed.map((complaint, index) => (
-              <ComplaintItem key={index} {...complaint} />
-            ))}
-          </div>
+          {completed.length === 0 ? (
+            <p className="text-gray-500">No completed complaints</p>
+          ) : (
+            <div className="space-y-4">
+              {completed.map((complaint, index) => (
+                <ComplaintItem key={index} {...complaint} />
+              ))}
+            </div>
+          )}
         </section>
       </div>
     </main>

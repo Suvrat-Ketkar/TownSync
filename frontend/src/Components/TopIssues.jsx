@@ -156,9 +156,9 @@ function TopIssues() {
                         </span>
                       </div>
                     </div>
-                    <button className="ml-3 px-3 py-1 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 hover:text-blue-700 transition-colors">
+                    <Link to={`/detail/${issue.id}`} className="ml-3 px-3 py-1 text-sm font-medium text-blue-600 bg-blue-50 rounded-md hover:bg-blue-100 hover:text-blue-700 transition-colors">
                       View Details
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))}

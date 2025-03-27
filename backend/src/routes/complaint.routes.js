@@ -6,7 +6,7 @@ import { Router } from "express";
 //   upvoteComplaint
 // } from "../controllers/reportIssue_ctrl.js";
 
-import {reportComplaint} from '../controllers/complaintController.js';
+import {reportComplaint, DisplayComplaintsByUser, complaintDetailPage} from '../controllers/complaintController.js';
 import {authenticateUser} from "../middleware/auth.js";
 import { upload } from "../middleware/multer.middleware.js";
 
@@ -22,11 +22,11 @@ complaintRouter.post(
   reportComplaint
 );
 
-// // Get all complaints for the logged-in user
-// complaintRouter.get("/user-complaints", getUserComplaints);
+// Get all complaints for the logged-in user
+complaintRouter.get("/user", DisplayComplaintsByUser);
 
-// // Get details of a specific complaint
-// complaintRouter.get("/details/:complaintId", getComplaintDetails);
+// Get details of a specific complaint
+complaintRouter.get("/details/:id", complaintDetailPage);
 
 // // Upvote a complaint
 // complaintRouter.post("/upvote/:complaintId", upvoteComplaint);

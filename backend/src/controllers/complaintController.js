@@ -58,3 +58,46 @@ export const reportComplaint = async (req, res) => {
     });
   }
 };
+
+
+export const DisplayComplaintsByUser = async (req, res) => {
+  try {
+    const complaints = await Complaint.find({ user: req.user._id });
+    res.status(200).json({
+      success: true,
+      message: 'Complaints retrieved successfully',
+      data: complaints
+    });
+    } catch (error) {
+    console.error('Error displaying complaints:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve complaints',
+      error: error.message
+    });
+  }
+}
+
+export const complaintDetailPage = async (req, res) => {
+  try {
+    const complaint = await Complaint.findById(req.params.id);
+    if (!complaint) {
+      return res.status(404).json({
+        success: false,
+        message: 'Complaint not found'
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: 'Complaint retrieved successfully',
+      data: complaint
+    });
+  } catch (error) {
+    console.error('Error retrieving complaint detail:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve complaint detail',
+      error: error.message
+    });
+  }
+}
