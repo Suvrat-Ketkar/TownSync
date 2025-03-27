@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 
 const Profile = () => {
   const { user, logout } = useAuth();
-
+  console.log("typing user",user);
+  
   if (!user) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#0FA4AF] to-sky-100 px-4">

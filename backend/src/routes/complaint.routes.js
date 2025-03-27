@@ -13,7 +13,10 @@ import { getStatistics, generateDailyStatistics } from "../controllers/statistic
 
 const complaintRouter = Router();
 
-// Apply authentication middleware to all routes
+// Public endpoint for statistics (no authentication required)
+complaintRouter.get("/statistics", getStatistics);
+
+// Apply authentication middleware to all other routes
 complaintRouter.use(authenticateUser);
 
 // Report a new issue
@@ -34,9 +37,6 @@ complaintRouter.patch("/status/:id", updateComplaintStatus);
 
 // Get all complaints (with optional filters)
 complaintRouter.get("/all", getAllComplaints);
-
-// Get statistics (with optional date range)
-complaintRouter.get("/statistics", getStatistics);
 
 // Generate daily statistics report (could be triggered by cron job)
 complaintRouter.post("/statistics/generate", generateDailyStatistics);

@@ -1,37 +1,143 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import axios from "axios";
 
 const PopularIssues = () => {
   const [startIndex, setStartIndex] = useState(0);
+  const [issueStats, setIssueStats] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const issues = [
-    { name: "Pothole", reports: 3456, img: "4c1f84c2-695d-4eba-bd85-2511c2dc7697.png" },
-    { name: "Graffiti", reports: 2345, img: "0a102ca3-0295-4a87-9af7-9f3bad50b1c9.png" },
-    { name: "Sidewalk Repair", reports: 1234, img: "c08abce3-e57e-4cae-bf2e-5d9974ab22ab.png" },
-    { name: "Traffic Sign Repair", reports: 5678, img: "243bac1f-dc3e-4c09-b46e-ec4175c4ba92.png" },
-    { name: "Street Light Issue", reports: 1890, img: "77407d4f-1483-4118-8987-e413b068ee3c.png" },
-  ];
+  // Images for each issue type
+  const issueImages = {
+    "Potholes": "4c1f84c2-695d-4eba-bd85-2511c2dc7697.png",
+    "Street Lights": "77407d4f-1483-4118-8987-e413b068ee3c.png",
+    "Garbage Collection": "0a102ca3-0295-4a87-9af7-9f3bad50b1c9.png",
+    "Water Supply": "c08abce3-e57e-4cae-bf2e-5d9974ab22ab.png",
+    "Electricity Issues": "243bac1f-dc3e-4c09-b46e-ec4175c4ba92.png",
+    "Other": "0a102ca3-0295-4a87-9af7-9f3bad50b1c9.png"
+  };
 
-  const visibleIssues = [
-    issues[startIndex % issues.length],
-    issues[(startIndex + 1) % issues.length],
-    issues[(startIndex + 2) % issues.length],
-  ];
+  useEffect(() => {
+    fetchStatistics();
+  }, []);
+
+  const fetchStatistics = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem('accessToken');
+      
+      // Use API without authentication for public statistics if user is not logged in
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+      let headers = {};
+      
+      if (token) {
+        const authToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
+        headers = { Authorization: authToken };
+      }
+
+      const response = await axios.get(`${apiBaseUrl}/api/v1/complaints/statistics`, { headers });
+
+      if (response.data.success && response.data.data.length > 0) {
+        // Process issue type data
+        processIssueStatistics(response.data.data);
+      } else {
+        // Use fallback data if no statistics are available
+        useFallbackData();
+      }
+    } catch (error) {
+      console.error('Error fetching statistics:', error);
+      useFallbackData();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Process statistics data to extract issue type counts
+  const processIssueStatistics = (statisticsData) => {
+    // Combine data from all date ranges to get total counts
+    const totalCounts = {
+      "Potholes": 0,
+      "Street Lights": 0,
+      "Garbage Collection": 0,
+      "Water Supply": 0,
+      "Electricity Issues": 0,
+      "Other": 0
+    };
+
+    // Sum counts across all date entries
+    statisticsData.forEach(stat => {
+      if (stat.issueTypeDistribution) {
+        totalCounts["Potholes"] += stat.issueTypeDistribution.Potholes || 0;
+        totalCounts["Street Lights"] += stat.issueTypeDistribution.StreetLights || 0;
+        totalCounts["Garbage Collection"] += stat.issueTypeDistribution.GarbageCollection || 0;
+        totalCounts["Water Supply"] += stat.issueTypeDistribution.WaterSupply || 0;
+        totalCounts["Electricity Issues"] += stat.issueTypeDistribution.ElectricityIssues || 0;
+        totalCounts["Other"] += stat.issueTypeDistribution.Other || 0;
+      }
+    });
+
+    // Convert to array format for display
+    const issueData = Object.entries(totalCounts).map(([name, reports]) => ({
+      name,
+      reports,
+      img: issueImages[name] || issueImages["Other"]
+    }));
+
+    // Sort by number of reports (descending)
+    const sortedIssues = issueData.sort((a, b) => b.reports - a.reports);
+    
+    setIssueStats(sortedIssues);
+  };
+
+  // Fallback to static data if API fails
+  const useFallbackData = () => {
+    setIssueStats([
+      { name: "Potholes", reports: 3456, img: issueImages["Potholes"] },
+      { name: "Street Lights", reports: 1890, img: issueImages["Street Lights"] },
+      { name: "Garbage Collection", reports: 2345, img: issueImages["Garbage Collection"] },
+      { name: "Water Supply", reports: 1234, img: issueImages["Water Supply"] },
+      { name: "Electricity Issues", reports: 1678, img: issueImages["Electricity Issues"] },
+    ]);
+  };
+
+  // Get visible issues for carousel
+  const getVisibleIssues = () => {
+    if (issueStats.length === 0) return [];
+    
+    return [
+      issueStats[startIndex % issueStats.length],
+      issueStats[(startIndex + 1) % issueStats.length],
+      issueStats[(startIndex + 2) % issueStats.length],
+    ];
+  };
 
   const scroll = (direction) => {
     setStartIndex((prev) => {
       if (direction === "right") {
-        return (prev + 1) % issues.length;
+        return (prev + 1) % issueStats.length;
       } else {
-        return (prev - 1 + issues.length) % issues.length;
+        return (prev - 1 + issueStats.length) % issueStats.length;
       }
     });
   };
 
+  // Wait for data to load
+  if (loading) {
+    return (
+      <div className="w-full py-14 bg-sky-100 min-h-[300px] flex items-center justify-center">
+        <div className="text-gray-600">Loading popular issues...</div>
+      </div>
+    );
+  }
+
+  // Get the visible issues for carousel
+  const visibleIssues = getVisibleIssues();
+
   return (
     <div className="w-full py-14 bg-sky-100">
       <h1 className="text-3xl font-extrabold text-center text-gray-900 drop-shadow-md mb-10">
-         Popular Issues in Your City
+        🔥 Popular Issues in Your City
       </h1>
 
       <div className="relative max-w-6xl mx-auto px-6 sm:px-8">
