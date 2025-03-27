@@ -22,6 +22,13 @@ const userSchema = new Schema(
       required: true,
       trim: true,
     },
+    coordinates: {
+      type: {
+        type: String,
+        default: 'Point',
+      },
+      coordinates : [Number],
+    },
     // uploaded_image : {
     //   type: String,
     //   default:

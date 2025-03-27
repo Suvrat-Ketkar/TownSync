@@ -3,24 +3,30 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    // Load user data from localStorage on initial render
+    const storedUser = localStorage.getItem('user');
+    return storedUser ? JSON.parse(storedUser) : null;
+  });
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Check if user is logged in on initial load
     const checkAuthStatus = async () => {
       try {
         const token = localStorage.getItem('accessToken');
         if (token) {
-          // You could validate the token here if needed
-          // For now we'll just assume if token exists, user is logged in
-          setUser({ token });
+          // If there's an API to get user details from the token, fetch user info here
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            setUser(JSON.parse(storedUser));
+          }
         }
       } catch (error) {
         console.error('Auth status check failed:', error);
-        // Clear any invalid tokens
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
       } finally {
         setLoading(false);
       }
@@ -31,11 +37,8 @@ export const AuthProvider = ({ children }) => {
 
   const login = (userData, tokens) => {
     setUser(userData);
-    console.log("Tokens received during login:", tokens);
-    if (tokens.accessToken) {
-      localStorage.setItem('accessToken', tokens.accessToken);
-      console.log("Access token saved to localStorage:", tokens.accessToken);
-    }
+    localStorage.setItem('user', JSON.stringify(userData)); // Store user details
+    localStorage.setItem('accessToken', tokens.accessToken);
     if (tokens.refreshToken) {
       localStorage.setItem('refreshToken', tokens.refreshToken);
     }
@@ -43,6 +46,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
+    localStorage.removeItem('user');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
   };
@@ -54,4 +58,4 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-export const useAuth = () => useContext(AuthContext); 
+export const useAuth = () => useContext(AuthContext);
