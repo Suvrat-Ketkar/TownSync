@@ -43,7 +43,10 @@ const Login = () => {
         
         // Use the context's login function
         login(
-          { email: data.email }, 
+          { 
+            email: data.email,
+            fullName: result.user.fullName || 'User'
+          }, 
           { 
             accessToken: accessToken, 
             refreshToken: result.refreshToken 

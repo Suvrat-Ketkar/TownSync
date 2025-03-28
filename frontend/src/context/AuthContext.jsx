@@ -6,6 +6,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
     // Load user data from localStorage on initial render
     const storedUser = localStorage.getItem('user');
+    console.log("Stored user data:", storedUser);
     return storedUser ? JSON.parse(storedUser) : null;
   });
 

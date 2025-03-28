@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 const Profile = () => {
   const { user, logout } = useAuth();
-  console.log("typing user",user);
+  console.log("User data in profile:", user);
   
   if (!user) {
     return (
@@ -17,6 +17,18 @@ const Profile = () => {
     );
   }
 
+  // Get initials for avatar
+  const getInitials = () => {
+    if (user.fullName) {
+      const nameParts = user.fullName.split(' ');
+      if (nameParts.length > 1) {
+        return `${nameParts[0].charAt(0)}${nameParts[1].charAt(0)}`.toUpperCase();
+      }
+      return user.fullName.charAt(0).toUpperCase();
+    }
+    return user.email ? user.email.charAt(0).toUpperCase() : 'U';
+  };
+
   return (
     <div className="min-h-screen pt-24 pb-10 bg-gradient-to-b from-[#0FA4AF] to-sky-100 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
@@ -24,11 +36,12 @@ const Profile = () => {
           <div className="inline-block bg-white p-2 rounded-full mb-4">
             <div className="bg-gray-200 h-24 w-24 rounded-full flex items-center justify-center">
               <span className="text-4xl text-blue-500 font-semibold">
-                {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
+                {getInitials()}
               </span>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-white">{user.email || 'User'}</h1>
+          <h1 className="text-2xl font-bold text-white">{user.fullName || 'User'}</h1>
+          <p className="text-blue-100 mt-1">{user.email || 'No email available'}</p>
         </div>
         
         <div className="p-6 sm:p-10">
@@ -36,6 +49,10 @@ const Profile = () => {
             <div>
               <h2 className="text-xl font-semibold text-gray-800 mb-3">Account Information</h2>
               <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex justify-between items-center py-2 border-b border-gray-200">
+                  <span className="text-gray-600">Full Name</span>
+                  <span className="font-medium">{user.fullName || 'Not available'}</span>
+                </div>
                 <div className="flex justify-between items-center py-2 border-b border-gray-200">
                   <span className="text-gray-600">Email</span>
                   <span className="font-medium">{user.email || 'Not available'}</span>

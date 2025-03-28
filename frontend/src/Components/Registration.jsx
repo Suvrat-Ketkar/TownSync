@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Eye, EyeOff } from 'lucide-react';
+import { useAuth } from '../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const {
@@ -12,11 +14,15 @@ const Register = () => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({ type: '', message: '' });
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const password = watch("password");
 
   const onSubmit = async (data) => {
   try {
+    setIsLoading(true);
     console.log('Form submitted:', data);
 
     const response = await fetch('http://localhost:3500/api/v1/user-register', {
@@ -31,12 +37,33 @@ const Register = () => {
 
     if (response.ok) {
       setSubmitStatus({ type: 'success', message: 'Registration successful!' });
+      
+      // Auto login after successful registration
+      if (result.accessToken) {
+        login(
+          { 
+            email: data.email,
+            fullName: data.fullName 
+          }, 
+          { 
+            accessToken: result.accessToken, 
+            refreshToken: result.refreshToken 
+          }
+        );
+        
+        // Redirect to home page after successful registration and login
+        setTimeout(() => {
+          navigate('/');
+        }, 1500);
+      }
     } else {
       setSubmitStatus({ type: 'error', message: result.message || 'Registration failed!' });
     }
   } catch (error) {
     console.error('Error submitting form:', error);
     setSubmitStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
+  } finally {
+    setIsLoading(false);
   }
 };
 
@@ -125,8 +152,9 @@ const Register = () => {
           <button
             type="submit"
             className="w-full bg-gradient-to-r from-[#0FA4AF] to-[#0E7490] hover:from-[#0E7490] hover:to-[#0FA4AF] text-white font-semibold py-3 sm:py-3.5 rounded-lg shadow-md transition duration-300"
+            disabled={isLoading}
           >
-            Register
+            {isLoading ? 'Registering...' : 'Register'}
           </button>
         </form>
 
