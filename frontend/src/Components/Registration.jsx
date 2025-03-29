@@ -21,51 +21,59 @@ const Register = () => {
   const password = watch("password");
 
   const onSubmit = async (data) => {
-  try {
     setIsLoading(true);
-    console.log('Form submitted:', data);
-
-    const response = await fetch('http://localhost:3500/api/v1/user-register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      setSubmitStatus({ type: 'success', message: 'Registration successful!' });
-      
-      // Auto login after successful registration
-      if (result.accessToken) {
-        login(
-          { 
-            email: data.email,
-            fullName: data.fullName 
-          }, 
-          { 
-            accessToken: result.accessToken, 
-            refreshToken: result.refreshToken 
+  
+    // Get user's location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          
+          // Add location to registration data
+          const registrationData = { ...data, latitude, longitude };
+  
+          try {
+            const response = await fetch("http://localhost:3500/api/v1/user-register", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(registrationData),
+            });
+  
+            const result = await response.json();
+  
+            if (response.ok) {
+              setSubmitStatus({ type: "success", message: "Registration successful!" });
+  
+              if (result.accessToken) {
+                login(
+                  { email: data.email, fullName: data.fullName },
+                  { accessToken: result.accessToken, refreshToken: result.refreshToken }
+                );
+  
+                setTimeout(() => navigate("/"), 1500);
+              }
+            } else {
+              setSubmitStatus({ type: "error", message: result.message || "Registration failed!" });
+            }
+          } catch (error) {
+            console.error("Error submitting form:", error);
+            setSubmitStatus({ type: "error", message: "Something went wrong. Please try again." });
+          } finally {
+            setIsLoading(false);
           }
-        );
-        
-        // Redirect to home page after successful registration and login
-        setTimeout(() => {
-          navigate('/');
-        }, 1500);
-      }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          setSubmitStatus({ type: "error", message: "Location permission denied. Please enable location." });
+          setIsLoading(false);
+        }
+      );
     } else {
-      setSubmitStatus({ type: 'error', message: result.message || 'Registration failed!' });
+      setSubmitStatus({ type: "error", message: "Geolocation is not supported by this browser." });
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Error submitting form:', error);
-    setSubmitStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
-  } finally {
-    setIsLoading(false);
-  }
-};
+  };
+  
 
 
   return (

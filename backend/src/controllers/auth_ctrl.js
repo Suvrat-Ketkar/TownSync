@@ -3,11 +3,16 @@ import { updateStatsOnNewUser } from "./statisticsController.js";
 
 export async function registerUser(req, res) {
     try {
-        const { current_address, email, fullName, password } = req.body;
-        if (!current_address || !email || !fullName || !password) {
+        const { current_address, email, fullName, password, latitude, longitude  } = req.body;
+        if (!current_address || !email || !fullName || !password || !latitude ||!longitude) {
             return res.status(400).json({ message: "All fields are required" });
         }
-        const user = await User.create({ current_address, email, fullName, password });
+        const user = await User.create({ current_address,
+            email,
+            fullName,
+            password,
+            coordinates: { type: "Point", coordinates: [longitude, latitude] }
+        });
         const accessToken = user.generateAccessToken();
         const refreshToken = user.generateRefreshToken();
 

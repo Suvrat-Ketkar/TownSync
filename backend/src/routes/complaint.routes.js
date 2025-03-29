@@ -10,6 +10,7 @@ import {reportComplaint, DisplayComplaintsByUser, complaintDetailPage, updateCom
 import {authenticateUser} from "../middleware/auth.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { getStatistics, generateDailyStatistics } from "../controllers/statisticsController.js";
+import { NearbyComplaints } from '../controllers/NearbyComplaints.js'
 
 const complaintRouter = Router();
 
@@ -43,5 +44,7 @@ complaintRouter.post("/statistics/generate", generateDailyStatistics);
 
 // // Upvote a complaint
 // complaintRouter.post("/upvote/:complaintId", upvoteComplaint);
+
+complaintRouter.get("/nearby-complaints", NearbyComplaints);
 
 export default complaintRouter; 
