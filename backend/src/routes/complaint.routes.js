@@ -44,7 +44,6 @@ complaintRouter.post("/statistics/generate", generateDailyStatistics);
 
 // // Upvote a complaint
 // complaintRouter.post("/upvote/:complaintId", upvoteComplaint);
-
 complaintRouter.get("/nearby-complaints", NearbyComplaints);
 
 export default complaintRouter; 

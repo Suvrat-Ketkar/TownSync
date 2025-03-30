@@ -10,7 +10,6 @@ const complaintSchema = new Schema(
   {
     complaint_ID: {
       type: Number, 
-      // required: true,
       unique: true,
     },
     user: {
@@ -19,11 +18,11 @@ const complaintSchema = new Schema(
       required: true
     },
     Issue_Type: {
-        type: String,
-        required: true,
-        trim: true,
-        enum: ["Potholes", "Street Lights", "Garbage Collection", "Water Supply", "Electricity Issues", "Other"], // Match the dropdown options
-      },
+      type: String,
+      required: true,
+      trim: true,
+      enum: ["Potholes", "Street Lights", "Garbage Collection", "Water Supply", "Electricity Issues", "Other"],
+    },
     Issue_Description: {
       type: String,
       required: true,
@@ -35,18 +34,18 @@ const complaintSchema = new Schema(
         default: 'Point',
         required: true
       },
-      coordinates : [Number]
+      coordinates: [Number]
     },
     address: {
       type: String,
-      required: true,
-      trim: true
+      trim: true,
+      default: null, // Making it optional
     },
     Status: {
       type: String,
       required: true,
       trim: true,
-      enum: ["Pending", "Rejected", "In Progress", "Resolved"], 
+      enum: ["Pending", "Rejected", "In Progress", "Resolved"],
       default: "Pending",
     },
     Image: {
@@ -59,12 +58,11 @@ const complaintSchema = new Schema(
       required: true,
       default: Date.now, 
     },
-    // if others is selected 
     Custom_Issue_Type: {
-        type: String,
-        trim: true,
-        default: null, // Optional field
-      },
+      type: String,
+      trim: true,
+      default: null,
+    },
     upvotes: {
       type: Number,
       default: 0
@@ -90,3 +88,12 @@ complaintSchema.plugin(AutoIncrement, {
 const Complaint = mongoose.model("Complaint", complaintSchema);
 
 export default Complaint;
+
+
+
+
+
+
+
+
+
