@@ -23,7 +23,7 @@ complaintRouter.use(authenticateUser);
 // Report a new issue
 complaintRouter.post(
   "/report",
-  upload.single("image"),  // 'image' should match the field name in the frontend form
+  upload.array("images", 5),  // Accept up to 5 images in the 'images' field
   reportComplaint
 );
 

@@ -5,18 +5,26 @@ import { updateStatsOnNewComplaint, updateStatsOnStatusChange } from "./statisti
 export const reportComplaint = async (req, res) => {
   try {
     const { Issue_Type, Issue_Description, address, Custom_Issue_Type, latitude, longitude } = req.body;
-    const imageFile = req.file;
+    const imageFiles = req.files;
 
-    if (!imageFile) {
-      return res.status(400).json({ success: false, message: 'Image is required' });
+    if (!imageFiles || imageFiles.length === 0) {
+      return res.status(400).json({ success: false, message: 'At least one image is required' });
     }
     if (!Issue_Type || !Issue_Description) {
       return res.status(400).json({ success: false, message: 'Please provide all required fields' });
     }
 
-    const imageUrl = await uploadToCloudinary(imageFile);
-    if (!imageUrl) {
-      return res.status(500).json({ success: false, message: 'Failed to upload image to Cloudinary' });
+    // Upload all images to Cloudinary
+    const imageUrls = [];
+    for (const file of imageFiles) {
+      const imageUrl = await uploadToCloudinary(file);
+      if (imageUrl) {
+        imageUrls.push(imageUrl);
+      }
+    }
+
+    if (imageUrls.length === 0) {
+      return res.status(500).json({ success: false, message: 'Failed to upload images to Cloudinary' });
     }
 
     let Location = null;
@@ -29,7 +37,8 @@ export const reportComplaint = async (req, res) => {
       Issue_Description,
       address: address || null,
       Location,  // Stores GeoJSON or remains null if not available
-      Image: imageUrl,
+      Image: imageUrls[0], // Set the first image as the main image for backward compatibility
+      Images: imageUrls,   // Store all images in the array
       Custom_Issue_Type: Issue_Type === 'Other' ? Custom_Issue_Type || null : null,
       Status: "Pending",
       user: req.user._id
@@ -93,20 +102,15 @@ export const complaintDetailPage = async (req, res) => {
 
 export const updateComplaintStatus = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { status } = req.body;
-    
-    // Validate status value
-    const validStatuses = ['Pending', 'In Progress', 'Resolved', 'Rejected'];
-    if (!validStatuses.includes(status)) {
+    const { status, adminComment } = req.body;
+    if (!status) {
       return res.status(400).json({
         success: false,
-        message: 'Invalid status value'
+        message: 'Status is required'
       });
     }
     
-    // Find the complaint
-    const complaint = await Complaint.findById(id);
+    const complaint = await Complaint.findById(req.params.id);
     if (!complaint) {
       return res.status(404).json({
         success: false,
@@ -114,15 +118,21 @@ export const updateComplaintStatus = async (req, res) => {
       });
     }
     
-    // Store the previous status before updating
+    // Update status
     const previousStatus = complaint.Status;
-    
-    // Update the status
     complaint.Status = status;
+    
+    // Add admin comment if provided
+    if (adminComment) {
+      complaint.Admin_Comment = adminComment;
+    }
+    
     await complaint.save();
     
-    // Update statistics based on the status change
-    await updateStatsOnStatusChange(complaint, previousStatus);
+    // Update statistics if status changed
+    if (previousStatus !== status) {
+      await updateStatsOnStatusChange(complaint, previousStatus);
+    }
     
     res.status(200).json({
       success: true,
@@ -137,7 +147,7 @@ export const updateComplaintStatus = async (req, res) => {
       error: error.message
     });
   }
-};
+}
 
 export const getAllComplaints = async (req, res) => {
   try {

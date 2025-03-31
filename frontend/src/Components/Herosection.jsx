@@ -24,9 +24,9 @@ const HeroSection = () => {
                 Report an issue
               </button>
             </Link>
-            <Link to = "/nearby-complaints">
+            <Link to="/nearby-complaints">
             <button className="h-12 px-6 rounded-full bg-white text-[#0e141b] font-semibold text-lg shadow-md hover:bg-gray-200 transition-all">
-              Near By Issues
+              Nearby Issues
             </button>
             </Link>
           </div> 

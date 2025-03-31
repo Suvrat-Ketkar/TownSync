@@ -9,8 +9,8 @@ const ReportIssue = () => {
   const { user } = useAuth();
   const [selectedCategory, setSelectedCategory] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
-  const [imageFile, setImageFile] = useState(null);
+  const [images, setImages] = useState([]);
+  const [imageFiles, setImageFiles] = useState([]);
   const [address, setAddress] = useState("");
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -39,11 +39,34 @@ const ReportIssue = () => {
   };
 
   const handleCapture = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setImageFile(file);
-      setImage(URL.createObjectURL(file));
+    const files = Array.from(event.target.files);
+    if (files.length === 0) return;
+
+    // Limit to maximum 5 images total
+    const availableSlots = 5 - images.length;
+    const filesToProcess = files.slice(0, availableSlots);
+    
+    if (filesToProcess.length > 0) {
+      const newImageFiles = [...imageFiles, ...filesToProcess];
+      setImageFiles(newImageFiles);
+      
+      const newImageUrls = filesToProcess.map(file => URL.createObjectURL(file));
+      setImages([...images, ...newImageUrls]);
     }
+  };
+
+  const removeImage = (index) => {
+    // Create new arrays without the removed image
+    const newImages = [...images];
+    const newImageFiles = [...imageFiles];
+    
+    // Remove the image at the specified index
+    newImages.splice(index, 1);
+    newImageFiles.splice(index, 1);
+    
+    // Update state
+    setImages(newImages);
+    setImageFiles(newImageFiles);
   };
 
   const handleAddressChange = (event) => {
@@ -56,8 +79,8 @@ const ReportIssue = () => {
     setError("");
     setSuccess("");
 
-    if (!selectedCategory || !description || (!location && !address) || !imageFile) {
-      setError("All fields are required, including location.");
+    if (!selectedCategory || !description || (!location && !address) || imageFiles.length === 0) {
+      setError("All fields are required, including at least one image and location.");
       setLoading(false);
       return;
     }
@@ -66,7 +89,11 @@ const ReportIssue = () => {
       const formData = new FormData();
       formData.append("Issue_Type", selectedCategory);
       formData.append("Issue_Description", description);
-      formData.append("image", imageFile);
+      
+      // Append all image files
+      imageFiles.forEach((file, index) => {
+        formData.append(`images`, file);
+      });
 
       if (selectedCategory === "Other") {
         formData.append("Custom_Issue_Type", description.split(" ")[0]);
@@ -87,16 +114,16 @@ const ReportIssue = () => {
       }
 
       const authToken = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
 
       const response = await axios.post(
-        "http://localhost:3500/api/v1/complaints/report",
+        `${apiBaseUrl}/api/v1/complaints/report`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
             "Authorization": authToken
-          },
-          withCredentials: true,
+          }
         }
       );
 
@@ -104,8 +131,8 @@ const ReportIssue = () => {
         setSuccess("Issue reported successfully!");
         setSelectedCategory("");
         setDescription("");
-        setImage(null);
-        setImageFile(null);
+        setImages([]);
+        setImageFiles([]);
         setAddress("");
         setLocation(null);
       }
@@ -126,7 +153,7 @@ const ReportIssue = () => {
         {success && <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-lg">{success}</div>}
 
         <form onSubmit={handleSubmit}>
-          <ImageUploader image={image} handleCapture={handleCapture} />
+          <ImageUploader images={images} handleCapture={handleCapture} removeImage={removeImage} />
           <CategorySelector selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
           <DescriptionBox description={description} setDescription={setDescription} />
 

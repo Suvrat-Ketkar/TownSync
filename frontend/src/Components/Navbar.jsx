@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Menu, X, UserCircle, LogOut, BarChart2 } from "lucide-react"; // Added chart icon
+import { Menu, X, UserCircle, LogOut, BarChart2, FileText, AlertTriangle, MapPin } from "lucide-react"; // Added map pin icon
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 
@@ -25,8 +25,14 @@ const Navbar = () => {
         <Link to="/" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
           Home
         </Link>
-        <Link to="/complaint" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
-          Track Issue
+        <Link to="/complaints" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
+          My Complaints
+        </Link>
+        <Link to="/nearby-complaints" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
+          Nearby Issues
+        </Link>
+        <Link to="/report" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
+          Report Issue
         </Link>
         {user && (
           <Link to="/statistics" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
@@ -69,8 +75,17 @@ const Navbar = () => {
           <Link to="/" className="text-white text-lg font-semibold" onClick={() => setIsOpen(false)}>
             Home
           </Link>
-          <Link to="/complaint" className="text-white text-lg font-semibold" onClick={() => setIsOpen(false)}>
-            Track Issue
+          <Link to="/complaints" className="text-white text-lg font-semibold flex items-center gap-2" onClick={() => setIsOpen(false)}>
+            <FileText className="w-5 h-5" />
+            <span>My Complaints</span>
+          </Link>
+          <Link to="/nearby-complaints" className="text-white text-lg font-semibold flex items-center gap-2" onClick={() => setIsOpen(false)}>
+            <MapPin className="w-5 h-5" />
+            <span>Nearby Issues</span>
+          </Link>
+          <Link to="/report" className="text-white text-lg font-semibold flex items-center gap-2" onClick={() => setIsOpen(false)}>
+            <AlertTriangle className="w-5 h-5" />
+            <span>Report Issue</span>
           </Link>
           
           {user && (

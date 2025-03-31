@@ -50,8 +50,12 @@ const complaintSchema = new Schema(
     },
     Image: {
       type: String,
-      required: true,
+      required: false, // Changed from required to optional since we'll use Images
       trim: true,
+    },
+    Images: {
+      type: [String], // Array of image URLs
+      default: [],
     },
     Date_of_report: {
       type: Date,

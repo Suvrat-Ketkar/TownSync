@@ -13,7 +13,19 @@ export const NearbyComplaints = async (req, res) => {
     const user = await User.findById(userId);
 
     if (!user || !user.coordinates || !user.coordinates.coordinates) {
-      return res.status(400).json({ success: false, message: "User location not found" });
+      // Default to a fallback location if user location is missing
+      console.log(`🔹 User Location: [undefined, undefined]`);
+      
+      // Get all complaints instead of doing geospatial search
+      const complaints = await Complaint.find({ Status: "Pending" })
+        .sort({ createdAt: -1 })
+        .limit(10);
+      
+      if (complaints.length === 0) {
+        return res.status(404).json({ success: false, message: "No complaints found" });
+      }
+      
+      return res.status(200).json({ success: true, complaints });
     }
 
     const lng = user.coordinates.coordinates[0];
@@ -24,33 +36,68 @@ export const NearbyComplaints = async (req, res) => {
     // ✅ Ensure that the "Location" field is indexed as a 2dsphere index
     await Complaint.collection.createIndex({ Location: "2dsphere" });
 
+    // Fixed query structure for $geoNear
     const complaints = await Complaint.aggregate([
       {
         $geoNear: {
           near: { type: "Point", coordinates: [lng, lat] },
           distanceField: "distance",
-          maxDistance: 30000, // Increase range to check
+          maxDistance: 30000,
           spherical: true,
-        },
+          query: { Status: "Pending" }
+        }
       },
-      { $match: { Status: "Pending" } },
       { $sort: { distance: 1 } }, // Sort by nearest complaints
-      { $limit: 10 }, // Limit the number of results
+      { $limit: 10 } // Limit the number of results
     ]);
 
     console.log(`🔹 Complaints Found: ${complaints.length}`);
-    complaints.forEach((c, index) => {
-      console.log(`🔹 Complaint #${index + 1} Location: [${c.Location.coordinates[0]}, ${c.Location.coordinates[1]}]`);
-    });
+    
+    if (complaints.length > 0) {
+      complaints.forEach((c, index) => {
+        console.log(`🔹 Complaint #${index + 1} Distance: ${Math.round(c.distance)}m`);
+      });
+    }
 
     if (complaints.length === 0) {
-      return res.status(404).json({ success: false, message: "No complaints found nearby" });
+      // Fallback to regular query if no nearby complaints found
+      const fallbackComplaints = await Complaint.find({ Status: "Pending" })
+        .sort({ createdAt: -1 })
+        .limit(10);
+        
+      if (fallbackComplaints.length === 0) {
+        return res.status(404).json({ success: false, message: "No complaints found" });
+      }
+      
+      return res.status(200).json({ success: true, complaints: fallbackComplaints });
     }
 
     res.status(200).json({ success: true, complaints });
   } catch (error) {
     console.error("🚨 Error fetching nearby complaints:", error);
-    res.status(500).json({ success: false, message: "Internal Server Error", errors: [error.message] });
+    
+    // Fallback in case of geospatial query error
+    try {
+      const fallbackComplaints = await Complaint.find({ Status: "Pending" })
+        .sort({ createdAt: -1 })
+        .limit(10);
+      
+      if (fallbackComplaints.length > 0) {
+        return res.status(200).json({ 
+          success: true, 
+          complaints: fallbackComplaints,
+          note: "Showing recent complaints due to geospatial query error"
+        });
+      } else {
+        return res.status(404).json({ success: false, message: "No complaints found" });
+      }
+    } catch (fallbackError) {
+      return res.status(500).json({ 
+        success: false, 
+        message: "Failed to retrieve complaints", 
+        errors: [error.message, fallbackError.message] 
+      });
+    }
   }
 };
 

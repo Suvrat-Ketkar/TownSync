@@ -11,6 +11,8 @@ import ComplaintsTracking from "./Components/Complaints.jsx";
 import Complaints from "./Complaints.jsx";
 import TopIssues from "./Components/TopIssues.jsx";
 import ComplaintDetails from "./Components/ComplaintDetails.jsx";
+import ComplaintsList from "./Components/ComplaintsList.jsx";
+import NearbyComplaints from "./Components/NearbyComplaints.jsx";
 import Profile from "./Components/Profile.jsx";
 import StatisticsDashboard from "./Components/StatisticsDashboard.jsx";
 import { AuthProvider } from "./context/AuthContext.jsx";
@@ -31,7 +33,9 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/complaint" element={<Complaints />} />
-          <Route path="/nearby-complaints" element={<ComplaintDetails />} />
+          <Route path="/complaints" element={<ComplaintsList />} />
+          <Route path="/detail/:complaintId" element={<ComplaintDetails />} />
+          <Route path="/nearby-complaints" element={<NearbyComplaints />} />
           <Route path="/all" element={<TopIssues />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/statistics" element={<StatisticsDashboard />} />
