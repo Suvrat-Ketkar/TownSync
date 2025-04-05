@@ -4,27 +4,11 @@ import CategorySelector from "./CategorySelector";
 import DescriptionBox from "./DescriptionBox";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
-import { Link, useNavigate } from "react-router-dom";
+import AuthRequired from "../Components/AuthRequired";
 
 const ReportIssue = () => {
   const { user } = useAuth();
 
-  // 🔐 Enforce Auth: Redirect UI if not logged in
-  if (!user) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#0FA4AF] to-sky-100 px-4">
-        <h2 className="text-2xl font-semibold text-white mb-4">
-          You need to be logged in to report an issue
-        </h2>
-        <Link
-          to="/login"
-          className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg"
-        >
-          Go to Login
-        </Link>
-      </div>
-    );
-  }
   const [selectedCategory, setSelectedCategory] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
@@ -34,6 +18,12 @@ const ReportIssue = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  if (!user) {
+    return <AuthRequired message="You need to be logged in to report a complaint" />;
+  }
+
+
 
   // Function to capture user's current location
   const captureLocation = () => {

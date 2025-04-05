@@ -6,7 +6,7 @@ import Footer from './Components/Footer.jsx';
 import ReportIssue from "./Components/ReportIssue.jsx";
 import Login from "./Components/Login.jsx";
 import Register from "./Components/Registration.jsx";
-import Complaints from "./Complaints.jsx";
+// import Complaints from "./Complaints.jsx";
 import TopIssues from "./Components/TopIssues.jsx";
 import ComplaintDetails from "./Components/ComplaintDetails.jsx";
 import ComplaintsList from "./Components/ComplaintsList.jsx";
@@ -21,8 +21,11 @@ import Home from "./Components/Home.jsx";
 const Layout = ({ children }) => {
   const location = useLocation();
 
-  // Show WelcomeNavbar only on "/"
-  const showWelcomeNavbar = location.pathname === "/";
+  // Define all routes that should show WelcomeNavbar
+  const welcomeNavbarRoutes = ["/", "/about-us", "/testimonials", "/contact-us"];
+
+  // Check if the current pathname matches one of them
+  const showWelcomeNavbar = welcomeNavbarRoutes.includes(location.pathname);
 
   return (
     <>
@@ -50,7 +53,7 @@ const App = () => {
             <Route path="/report" element={<ReportIssue />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/complaint" element={<Complaints />} />
+            {/* <Route path="/complaint" element={<Complaints />} /> */}
             <Route path="/complaints" element={<ComplaintsList />} />
             <Route path="/detail/:complaintId" element={<ComplaintDetails />} />
             <Route path="/nearby-complaints" element={<NearbyComplaints />} />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Link } from 'react-router-dom';
+import AuthRequired from "../Components/AuthRequired";
 
 const Profile = () => {
   const { user, logout } = useAuth();
@@ -8,12 +9,7 @@ const Profile = () => {
   
   if (!user) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#0FA4AF] to-sky-100 px-4">
-        <h2 className="text-2xl font-semibold text-white mb-4">You need to be logged in to view your profile</h2>
-        <Link to="/login" className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg">
-          Go to Login
-        </Link>
-      </div>
+      <AuthRequired message="You must be logged in to view your profile." />
     );
   }
 

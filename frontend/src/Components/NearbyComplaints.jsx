@@ -1,13 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../context/AuthContext";
+import AuthRequired from "../Components/AuthRequired";
 
 const NearbyComplaints = () => {
+  const { user } = useAuth();
+
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [radius, setRadius] = useState(3); // 3km radius by default
+
+  if (!user) {
+    return <AuthRequired message="You need to be logged in to view nearby complaints" />;
+  }
 
   useEffect(() => {
     // First get user's location
