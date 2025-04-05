@@ -85,8 +85,8 @@ const ComplaintsList = () => {
           <div className="text-red-500 text-5xl mb-4">⚠️</div>
           <h2 className="text-2xl font-bold text-gray-800 mb-2">Error Loading Complaints</h2>
           <p className="text-gray-600 mb-6">{error}</p>
-          <Link to="/" className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
-            Go to Home
+          <Link to="/login" className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition">
+            Login Again
           </Link>
         </div>
       </div>

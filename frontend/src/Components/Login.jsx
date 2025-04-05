@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
@@ -55,7 +55,7 @@ const Login = () => {
         
         // Redirect to home page after successful login
         setTimeout(() => {
-          navigate('/');
+          navigate('/home');
         }, 1000);
       } else {
         setSubmitStatus({ type: 'error', message: result.message || 'Login failed!' });

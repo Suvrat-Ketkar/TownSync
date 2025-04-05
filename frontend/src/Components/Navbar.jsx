@@ -22,7 +22,7 @@ const Navbar = () => {
 
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-8">
-        <Link to="/" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
+        <Link to="/home" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">
           Home
         </Link>
         <Link to="/complaints" className="text-white text-base font-semibold transition-transform duration-300 hover:scale-110 hover:text-[#FFD700]">

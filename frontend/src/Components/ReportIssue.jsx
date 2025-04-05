@@ -1,12 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect }from "react";
 import ImageUploader from "./ImageUploader";
 import CategorySelector from "./CategorySelector";
 import DescriptionBox from "./DescriptionBox";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom";
 
 const ReportIssue = () => {
   const { user } = useAuth();
+
+  // 🔐 Enforce Auth: Redirect UI if not logged in
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#0FA4AF] to-sky-100 px-4">
+        <h2 className="text-2xl font-semibold text-white mb-4">
+          You need to be logged in to report an issue
+        </h2>
+        <Link
+          to="/login"
+          className="bg-white text-[#0E7490] px-6 py-2 rounded-full font-semibold text-base shadow-md transition-all duration-300 hover:bg-[#FFD700] hover:text-[#0E141B] hover:shadow-lg"
+        >
+          Go to Login
+        </Link>
+      </div>
+    );
+  }
   const [selectedCategory, setSelectedCategory] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
@@ -79,7 +97,7 @@ const ReportIssue = () => {
     setError("");
     setSuccess("");
 
-    if (!selectedCategory || !description || (!location && !address) || imageFiles.length === 0) {
+    if (!selectedCategory || !description || !location || !address || imageFiles.length === 0) {
       setError("All fields are required, including at least one image and location.");
       setLoading(false);
       return;
@@ -99,12 +117,11 @@ const ReportIssue = () => {
         formData.append("Custom_Issue_Type", description.split(" ")[0]);
       }
 
-      if (location) {
-        formData.append("latitude", location.latitude);
-        formData.append("longitude", location.longitude);
-      } else {
-        formData.append("address", address);
-      }
+
+      formData.append("latitude", location.latitude);
+      formData.append("longitude", location.longitude);
+      formData.append("address", address);
+     
 
       const token = localStorage.getItem('accessToken');
       if (!token) {

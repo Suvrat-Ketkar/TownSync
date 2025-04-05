@@ -39,4 +39,3 @@ const ComplaintsTracking = () => {
   };
   
   export default ComplaintsTracking;
-  
