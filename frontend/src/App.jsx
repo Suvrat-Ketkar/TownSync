@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from './Components/Navbar.jsx';
-import WelcomeNavbar from './Components/WelcomeNavbar.jsx'; // Make sure it's imported
+import WelcomeNavbar from './Components/WelcomeNavbar.jsx';
 import Footer from './Components/Footer.jsx';
 import ReportIssue from "./Components/ReportIssue.jsx";
 import Login from "./Components/Login.jsx";
@@ -45,6 +45,7 @@ const App = () => {
                 <PopularIssues />
               </>
             } /> */}
+            <Route path="/" element={<WelcomePage />} />
             <Route path="/home" element={<Home />} />
             <Route path="/report" element={<ReportIssue />} />
             <Route path="/login" element={<Login />} />
@@ -55,8 +56,7 @@ const App = () => {
             <Route path="/nearby-complaints" element={<NearbyComplaints />} />
             <Route path="/all" element={<TopIssues />} />
             <Route path="/profile" element={<Profile />} />
-            <Route path="/statistics" element={<StatisticsDashboard />} />
-            <Route path="/" element={<WelcomePage />} />
+            <Route path="/statistics" element={<StatisticsDashboard />} />     
           </Routes>
         </Layout>
       </Router>
