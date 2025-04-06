@@ -1,55 +1,66 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    // Load user data from localStorage on initial render
     const storedUser = localStorage.getItem('user');
-    console.log("Stored user data:", storedUser);
-    return storedUser ? JSON.parse(storedUser) : null;
+    try {
+      return storedUser && storedUser !== "undefined" ? JSON.parse(storedUser) : null;
+    } catch (e) {
+      console.error("Invalid user JSON in localStorage:", storedUser);
+      console.error(e);
+      localStorage.removeItem("user");
+      return null;
+    }
   });
 
   const [loading, setLoading] = useState(true);
 
+  const refreshAccessToken = async () => {
+    try {
+      const response = await axios.get('/api/v1/auth/refresh-token', {
+        withCredentials: true, // include cookies in request
+      });
+
+      const { accessToken, user } = response.data;
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('user', JSON.stringify(user));
+      setUser(user);
+    } catch (error) {
+      console.error('Failed to refresh access token:', error);
+      logout(); // clear all on failure
+    }
+  };
+
   useEffect(() => {
-    const checkAuthStatus = async () => {
+    const initializeAuth = async () => {
       try {
-        const token = localStorage.getItem('accessToken');
-        if (token) {
-          // If there's an API to get user details from the token, fetch user info here
-          const storedUser = localStorage.getItem('user');
-          if (storedUser) {
-            setUser(JSON.parse(storedUser));
-          }
-        }
-      } catch (error) {
-        console.error('Auth status check failed:', error);
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('user');
+        await refreshAccessToken(); // try to silently log in
+      } catch (err) {
+        console.error('Silent login failed:', err);
       } finally {
         setLoading(false);
       }
     };
 
-    checkAuthStatus();
+    initializeAuth();
   }, []);
 
   const login = (userData, tokens) => {
     setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData)); // Store user details
+    localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('accessToken', tokens.accessToken);
-    if (tokens.refreshToken) {
-      localStorage.setItem('refreshToken', tokens.refreshToken);
-    }
+    // no need to store refreshToken
   };
 
   const logout = () => {
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    // optional: logout request to server
+    axios.get('/api/v1/auth/logout', { withCredentials: true }).catch(console.error);
   };
 
   return (
