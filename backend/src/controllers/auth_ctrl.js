@@ -1,5 +1,8 @@
 import { User }from "../models/users.models.js";
 import { updateStatsOnNewUser } from "./statisticsController.js";
+import { omitPassword } from "../utils/sanitizeUser.js";
+import { issueTokens } from "../utils/jwt.js";
+import jwt from "jsonwebtoken";
 
 export async function registerUser(req, res) {
     try {
@@ -13,20 +16,27 @@ export async function registerUser(req, res) {
             password,
             coordinates: { type: "Point", coordinates: [longitude, latitude] }
         });
-        const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
 
+        const { accessToken, refreshToken } = await issueTokens(user);
         user.refreshToken = refreshToken;
-        await user.save(); 
-        
+        await user.save();
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          });
+
+        const sanitizedUser = omitPassword(user);
+
         // Update statistics for new user registration
         await updateStatsOnNewUser();
 
         res.status(201).json({
             message: "User registered successfully",
-            user,
+            user: sanitizedUser,
             accessToken,
-            refreshToken,
         });
     } catch (err) {
         console.error("Error registering user:", err);
@@ -49,11 +59,17 @@ export async function loginUser(req,res,next){
         if (!isPasswordValid) {
             return res.status(401).json({message: "Invalid credentials"});
         }
-        const accessToken = user.generateAccessToken();
-        const refreshToken = user.generateRefreshToken();
 
+        const { accessToken, refreshToken } = await issueTokens(user);
         user.refreshToken = refreshToken;
         await user.save();
+
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+          });
 
         return res.status(200).json({
             message: "Login successful",
@@ -63,9 +79,7 @@ export async function loginUser(req,res,next){
                 fullName: user.fullName
             },
             accessToken,
-            refreshToken
         });
-        console.log(user);
     }
     catch(err){
         console.error("Error logging in user:", err);
@@ -73,15 +87,69 @@ export async function loginUser(req,res,next){
     }
 }
 
-export async function logOut(req,res,next){
-    try{
-        req.user.accessToken = null;
-        req.user.refreshToken = null;
-        await req.user.save();
-        res.json({message: "Logged out successfully"});
-    }
-    catch(err){
-        console.error("Error logging out user:", err);
-        res.status(500).json({message: "Internal server error"});
-    }
+export async function logOut(req, res, next) {
+  try {
+    // Clear refresh token from the user in DB
+    req.user.refreshToken = null;
+    await req.user.save();
+
+    // Clear the refresh token cookie
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'Strict', // adjust if needed
+    });
+
+    res.json({ message: "Logged out successfully" });
+  } catch (err) {
+    console.error("Error logging out user:", err);
+    res.status(500).json({ message: "Internal server error" });
+  }
 }
+
+
+export async function refreshAccessToken(req, res) {
+  try {
+    const token = req.cookies.refreshToken;
+
+    if (!token) {
+      return res.status(401).json({ message: "Refresh token missing" });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const user = await User.findById(decoded._id);
+    if (!user || user.refreshToken !== token) {
+      return res.status(403).json({ message: "Invalid refresh token" });
+    }
+
+    // Issue new tokens
+    const { accessToken, refreshToken } = await issueTokens(user);
+    user.refreshToken = refreshToken;
+    await user.save();
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    const sanitizedUser = omitPassword(user);
+
+    res.status(200).json({
+      message: "Access token refreshed",
+      accessToken,
+      user: sanitizedUser,
+    });
+  } catch (err) {
+    console.error("Refresh token error:", err);
+    res.status(403).json({ message: "Invalid or expired refresh token" });
+  }
+}
+
+        // const accessToken = user.generateAccessToken();
+        // const refreshToken = user.generateRefreshToken();
+
+        // user.refreshToken = refreshToken;
+        // await user.save(); 
