@@ -1,56 +1,45 @@
 import jwt from "jsonwebtoken";
+import { User }from "../models/users.models.js";
 
-export const authenticateUser = (req, res, next) => {
+export const authenticateUser = async (req, res, next) => {
   try {
-    // Get token from cookies or headers
-    const authHeader = req.header("Authorization");
-    console.log("Auth header:", authHeader); // Debug the auth header
-    
-    let token;
-    
-    // Check if token is in cookies
-    if (req.cookies?.accessToken) {
-      token = req.cookies.accessToken;
-    } 
-    // Check if token is in Authorization header
-    else if (authHeader) {
-      // If the token already has "Bearer " prefix, remove it once
-      token = authHeader.startsWith("Bearer ") ? authHeader.substring(7) : authHeader;
-    }
-    
-    console.log("Token after extraction:", token); // Debug the extracted token
-    console.log("Token type:", typeof token); // Debug token type
-    console.log("Token length:", token ? token.length : 0); // Debug token length
+    const refreshToken = req.cookies?.refreshToken;
 
-    if (!token) {
+    if (!refreshToken) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized request - token missing"
+        message: "Unauthorized request - refresh token missing"
       });
     }
 
-    try {
-      // Verify token
-      console.log("JWT_SECRET exists:", !!process.env.JWT_SECRET); // Check if secret exists
-      console.log("JWT_SECRET:", process.env.JWT_SECRET); // Check actual secret (be careful with this in production)
-      const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-      console.log("Token decoded successfully:", decodedToken); // Log decoded token
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
 
-      // Set user on request object
-      req.user = { _id: decodedToken._id };
-      next();
-    } catch (verifyError) {
-      console.error("JWT verification specific error:", verifyError.message);
-      return res.status(401).json({
+    const user = await User.findById(decoded._id);
+
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        message: `Token verification failed: ${verifyError.message}`
+        message: "User not found"
       });
     }
+
+    if (user.refreshToken !== refreshToken) {
+      return res.status(403).json({
+        success: false,
+        message: "Invalid refresh token"
+      });
+    }
+
+    // Attach full user object to req
+    req.user = user;
+
+    next();
   } catch (error) {
-    console.error("JWT overall error:", error.message); // Log the error
+    console.error("Refresh token auth error:", error.message);
     return res.status(401).json({
       success: false,
-      message: error?.message || "Invalid access token"
+      message: "Unauthorized - invalid or expired refresh token"
     });
   }
 };
