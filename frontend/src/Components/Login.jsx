@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
@@ -12,57 +12,68 @@ const Login = () => {
   } = useForm();
 
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [submitStatus, setSubmitStatus] = useState({ type: '', message: '' });
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/home');
+    }
+  }, [isAuthenticated, navigate]);
 
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
       console.log('Form submitted:', data);
-      
+
       const response = await fetch('http://localhost:3500/api/v1/user-login', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data)
+        // Add credentials if using cookies for session auth
+        credentials: 'include',
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
-      console.log('Login API response:', result); // Debug API response
+      console.log('Login API response:', result);
 
       if (response.ok) {
         setSubmitStatus({ type: 'success', message: 'Login successful!' });
-        
-        // Don't add Bearer prefix when saving to localStorage
+
         const accessToken = result.accessToken;
-        
-        console.log('Access token to be saved:', accessToken); // Debug token
-        
-        // Use the context's login function
+        console.log('Access token to be saved:', accessToken);
+
+        // Login using only accessToken
         login(
-          { 
+          {
             email: data.email,
-            fullName: result.user.fullName || 'User'
-          }, 
-          { 
-            accessToken: accessToken, 
-            refreshToken: result.refreshToken 
+            fullName: result.user.fullName || 'User',
+          },
+          {
+            accessToken: accessToken,
           }
         );
-        
-        // Redirect to home page after successful login
+
+        // Navigate after success
         setTimeout(() => {
           navigate('/home');
         }, 1000);
       } else {
-        setSubmitStatus({ type: 'error', message: result.message || 'Login failed!' });
+        setSubmitStatus({
+          type: 'error',
+          message: result.message || 'Login failed!',
+        });
       }
     } catch (error) {
       console.error('Error logging in:', error);
-      setSubmitStatus({ type: 'error', message: 'Something went wrong. Please try again.' });
+      setSubmitStatus({
+        type: 'error',
+        message: 'Something went wrong. Please try again.',
+      });
     } finally {
       setIsLoading(false);
     }

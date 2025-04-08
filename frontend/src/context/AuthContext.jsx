@@ -20,8 +20,8 @@ export const AuthProvider = ({ children }) => {
 
   const refreshAccessToken = async () => {
     try {
-      const response = await axios.get('/api/v1/auth/refresh-token', {
-        withCredentials: true, // include cookies in request
+      const response = await axios.get('http://localhost:3500/api/v1/auth/refresh-token', {
+        withCredentials: true,
       });
 
       const { accessToken, user } = response.data;
@@ -29,15 +29,19 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
     } catch (error) {
-      console.error('Failed to refresh access token:', error);
-      logout(); // clear all on failure
+      if (error.response?.status === 401) {
+        console.log('No refresh token found — likely a first-time visitor or not logged in.');
+      } else {
+        console.error('Failed to refresh access token:', error);
+      }
+      logout(false); // don't trigger server logout on 401
     }
   };
 
   useEffect(() => {
     const initializeAuth = async () => {
       try {
-        await refreshAccessToken(); // try to silently log in
+        await refreshAccessToken();
       } catch (err) {
         console.error('Silent login failed:', err);
       } finally {
@@ -52,19 +56,24 @@ export const AuthProvider = ({ children }) => {
     setUser(userData);
     localStorage.setItem('user', JSON.stringify(userData));
     localStorage.setItem('accessToken', tokens.accessToken);
-    // no need to store refreshToken
   };
 
-  const logout = () => {
+  const logout = (notifyServer = true) => {
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('accessToken');
-    // optional: logout request to server
-    axios.get('/api/v1/auth/logout', { withCredentials: true }).catch(console.error);
+  
+    if (notifyServer) {
+      axios.post('http://localhost:3500/api/v1/user-logout', {}, {
+        withCredentials: true,
+      }).catch(console.error);
+    }
   };
+  
+  
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout, isAuthenticated: !!user }}>
       {children}
     </AuthContext.Provider>
   );
