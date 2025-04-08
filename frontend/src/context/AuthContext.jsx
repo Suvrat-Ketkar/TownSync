@@ -19,24 +19,31 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   const refreshAccessToken = async () => {
+    if (!user) {
+      // No need to try refreshing if there's no user in localStorage
+      console.info('No user found — skipping refresh token call.');
+      return;
+    }
+  
     try {
       const response = await axios.get('http://localhost:3500/api/v1/auth/refresh-token', {
         withCredentials: true,
       });
-
+  
       const { accessToken, user } = response.data;
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('user', JSON.stringify(user));
       setUser(user);
     } catch (error) {
       if (error.response?.status === 401) {
-        console.log('No refresh token found — likely a first-time visitor or not logged in.');
+        console.info('Refresh token expired or not present.');
       } else {
         console.error('Failed to refresh access token:', error);
       }
-      logout(false); // don't trigger server logout on 401
+      logout(false); // don't notify server
     }
   };
+  
 
   useEffect(() => {
     const initializeAuth = async () => {
