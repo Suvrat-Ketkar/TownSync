@@ -5,7 +5,7 @@ import DescriptionBox from "./DescriptionBox";
 import axios from "axios";
 import { useAuth } from "../context/AuthContext";
 import AuthRequired from "../Components/AuthRequired";
-
+import {getApiBaseUrl} from '../utils/apiBase.jsx'
 const ReportIssue = () => {
   const { user } = useAuth();
 
@@ -124,7 +124,7 @@ const ReportIssue = () => {
       const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
 
       const response = await axios.post(
-        `${apiBaseUrl}/api/v1/complaints/report`,
+        `${getApiBaseUrl()}/api/v1/complaints/report`,
         formData,
         {
           headers: {

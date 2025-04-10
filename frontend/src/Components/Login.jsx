@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
+import {getApiBaseUrl} from '../utils/apiBase.jsx'
 
 const Login = () => {
   const {
@@ -28,7 +29,7 @@ const Login = () => {
       setIsLoading(true);
       console.log('Form submitted:', data);
 
-      const response = await fetch('http://localhost:3500/api/v1/user-login', {
+      const response = await fetch(`${getApiBaseUrl()}/api/v1/user-login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

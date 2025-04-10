@@ -7,7 +7,8 @@
     "dev": "vite --host",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "expose": "ngrok http 5173"
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.6",
@@ -31,6 +32,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
+    "ngrok": "^5.0.0-beta.2",
     "vite": "^6.1.0"
   }
 }

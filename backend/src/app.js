@@ -11,12 +11,38 @@ import { generateDailyStatistics } from './controllers/statisticsController.js';
 const app = express();
 
 // Configure CORS with specific origin and credentials
-app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"], // Allow multiple frontend URLs
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-}));
+// app.use(cors({
+//     origin: ["http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174"], // Allow multiple frontend URLs
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+// }));
+
+const dynamicCors = cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true); // allow non-browser clients like Postman
+
+    const allowedPatterns = [
+      /^http:\/\/localhost:\d+$/,         // localhost:5173, localhost:5174, etc.
+      /^http:\/\/127\.0\.0\.1:\d+$/,       // 127.0.0.1:5173, etc.
+      /^http:\/\/192\.168\.\d+\.\d+:\d+$/  // LAN IPs like 192.168.112.6:5173
+    ];
+
+    const isAllowed = allowedPatterns.some(pattern => pattern.test(origin));
+
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS: ' + origin));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+});
+
+app.use(dynamicCors);
+
 
 app.use(express.json({limit: "16kb"}))
 app.use(express.urlencoded({extended: true, limit: "16kb"}))
