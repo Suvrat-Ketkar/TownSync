@@ -2,7 +2,7 @@ import React from "react";
 
 const CategorySelect = ({ selectedCategory, setSelectedCategory }) => {
   const categories = [
-    "Potholes",
+    "Patholes",
     "Street Lights",
     "Garbage Collection",
     "Water Supply",

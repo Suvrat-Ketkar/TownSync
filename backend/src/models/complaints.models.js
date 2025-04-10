@@ -1,11 +1,7 @@
 import { Schema } from "mongoose";
 import mongoose from 'mongoose';
 import _AutoIncrement from 'mongoose-sequence';
-
 const AutoIncrement = _AutoIncrement(mongoose);
-
-
-
 const complaintSchema = new Schema(
   {
     complaint_ID: {
@@ -16,6 +12,11 @@ const complaintSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true
+    },
+    assignedAuthority: {
+      type: Schema.Types.ObjectId,
+      ref: "Authority", 
+      default: null
     },
     Issue_Type: {
       type: String,
@@ -92,12 +93,3 @@ complaintSchema.plugin(AutoIncrement, {
 const Complaint = mongoose.model("Complaint", complaintSchema);
 
 export default Complaint;
-
-
-
-
-
-
-
-
-

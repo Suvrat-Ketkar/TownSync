@@ -57,7 +57,7 @@ function TopIssues() {
     try {
       setLoading(true);
       const mockResponse = [
-        { id: 1, title: "Potholes", reports: 45, severity: "high", location: "0.5 mi away", lastReported: "2025-02-20" },
+        { id: 1, title: "Patholes", reports: 45, severity: "high", location: "0.5 mi away", lastReported: "2025-02-20" },
         { id: 2, title: "Broken Streetlights", reports: 38, severity: "medium", location: "1 mi away", lastReported: "2025-02-19" },
         { id: 3, title: "Garbage Overflow", reports: 32, severity: "medium", location: "0.3 mi away", lastReported: "2025-02-20" },
         { id: 4, title: "Water Leakage", reports: 29, severity: "high", location: "2 mi away", lastReported: "2025-02-18" },
@@ -79,7 +79,7 @@ function TopIssues() {
   // Fallback function for default issues
   const fetchDefaultIssues = () => {
     setIssues([
-      { id: 1, title: "Potholes on Main St", reports: 45, severity: "high", location: "Downtown", lastReported: "2025-02-20" },
+      { id: 1, title: "Patholes on Main St", reports: 45, severity: "high", location: "Downtown", lastReported: "2025-02-20" },
       { id: 2, title: "Broken Streetlights", reports: 38, severity: "medium", location: "West End", lastReported: "2025-02-19" },
       // ... other default issues ...
     ]);

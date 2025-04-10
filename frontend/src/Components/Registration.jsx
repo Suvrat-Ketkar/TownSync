@@ -38,12 +38,11 @@ const Register = () => {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(registrationData),
             });
-  
-            const result = await response.json();
-  
+
             if (response.ok) {
               setSubmitStatus({ type: "success", message: "Registration successful!" });
-  
+              const result = await response.json();
+
               if (result.accessToken) {
                 login(
                   { email: data.email, fullName: data.fullName },
@@ -80,7 +79,7 @@ const Register = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0FA4AF] to-sky-100 px-4 sm:px-6 lg:px-8 py-8 mt-9">
       <div className="w-full max-w-sm sm:max-w-md md:max-w-lg bg-white shadow-lg rounded-2xl p-6 sm:p-8 md:p-10">
         <h2 className="text-2xl sm:text-3xl font-semibold text-center text-gray-800 mb-6">Create Account</h2>
-        
+
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Full Name */}
           <div>

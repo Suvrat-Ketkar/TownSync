@@ -10,7 +10,7 @@ const PopularIssues = () => {
 
   // Images for each issue type
   const issueImages = {
-    "Potholes": "4c1f84c2-695d-4eba-bd85-2511c2dc7697.png",
+    "Patholes": "4c1f84c2-695d-4eba-bd85-2511c2dc7697.png",
     "Street Lights": "77407d4f-1483-4118-8987-e413b068ee3c.png",
     "Garbage Collection": "0a102ca3-0295-4a87-9af7-9f3bad50b1c9.png",
     "Water Supply": "c08abce3-e57e-4cae-bf2e-5d9974ab22ab.png",
@@ -57,7 +57,7 @@ const PopularIssues = () => {
   const processIssueStatistics = (statisticsData) => {
     // Combine data from all date ranges to get total counts
     const totalCounts = {
-      "Potholes": 0,
+      "Patholes": 0,
       "Street Lights": 0,
       "Garbage Collection": 0,
       "Water Supply": 0,
@@ -68,7 +68,7 @@ const PopularIssues = () => {
     // Sum counts across all date entries
     statisticsData.forEach(stat => {
       if (stat.issueTypeDistribution) {
-        totalCounts["Potholes"] += stat.issueTypeDistribution.Potholes || 0;
+        totalCounts["Patholes"] += stat.issueTypeDistribution.Patholes || 0;
         totalCounts["Street Lights"] += stat.issueTypeDistribution.StreetLights || 0;
         totalCounts["Garbage Collection"] += stat.issueTypeDistribution.GarbageCollection || 0;
         totalCounts["Water Supply"] += stat.issueTypeDistribution.WaterSupply || 0;
@@ -93,7 +93,7 @@ const PopularIssues = () => {
   // Fallback to static data if API fails
   const useFallbackData = () => {
     setIssueStats([
-      { name: "Potholes", reports: 3456, img: issueImages["Potholes"] },
+      { name: "Patholes", reports: 3456, img: issueImages["Patholes"] },
       { name: "Street Lights", reports: 1890, img: issueImages["Street Lights"] },
       { name: "Garbage Collection", reports: 2345, img: issueImages["Garbage Collection"] },
       { name: "Water Supply", reports: 1234, img: issueImages["Water Supply"] },

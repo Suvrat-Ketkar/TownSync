@@ -1,11 +1,4 @@
 import { Router } from "express";
-// import { 
-//   reportIssue,
-//   getUserComplaints,
-//   getComplaintDetails,
-//   upvoteComplaint
-// } from "../controllers/reportIssue_ctrl.js";
-
 import {reportComplaint, DisplayComplaintsByUser, complaintDetailPage, updateComplaintStatus, getAllComplaints} from '../controllers/complaintController.js';
 import {authenticateUser} from "../middleware/auth.js";
 import { upload } from "../middleware/multer.middleware.js";
@@ -13,10 +6,8 @@ import { getStatistics, generateDailyStatistics } from "../controllers/statistic
 import { NearbyComplaints } from '../controllers/NearbyComplaints.js'
 
 const complaintRouter = Router();
-
 // Public endpoint for statistics (no authentication required)
 complaintRouter.get("/statistics", getStatistics);
-
 // Apply authentication middleware to all other routes
 complaintRouter.use(authenticateUser);
 

@@ -7,7 +7,8 @@ import authRouter from './routes/auth.routes.js'
 import { errorHandler } from './middleware/errorHandler.middleware.js';
 import cron from 'node-cron';
 import { generateDailyStatistics } from './controllers/statisticsController.js';
-
+import Authority from './models/authority.models.js';
+import authorityRouter from './routes/authority.routes.js';
 const app = express();
 
 // Configure CORS with specific origin and credentials
@@ -52,6 +53,7 @@ app.use(cookieParser())
 app.use('/api/v1', userRouter);
 app.use('/api/v1/complaints', complaintRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/authority',authorityRouter)
 // Schedule job to run at midnight every day
 cron.schedule('0 0 * * *', async () => {
   console.log('Running daily statistics generation job');

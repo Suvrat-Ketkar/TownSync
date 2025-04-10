@@ -24,6 +24,15 @@ const Login = () => {
     }
   }, [isAuthenticated, navigate]);
 
+  const departmentEmails = [
+    "streetlights@gmail.com",
+    "watersupply@gmail.com",
+    "electricity@gmail.com",
+    "sanitation@gmail.com",
+    "patholes@gmail.com",
+    "garbage@gmail.com"
+  ];
+
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
@@ -38,7 +47,7 @@ const Login = () => {
         credentials: 'include',
         body: JSON.stringify(data),
       });
-
+  
       const result = await response.json();
       console.log('Login API response:', result);
 
@@ -58,10 +67,13 @@ const Login = () => {
             accessToken: accessToken,
           }
         );
-
-        // Navigate after success
+  
         setTimeout(() => {
-          navigate('/home');
+          if (departmentEmails.includes(data.email.toLowerCase())) {
+            navigate('/authority-dashboard'); // Navigate to authority dashboard
+          } else {
+            navigate('/home'); // Navigate to normal user dashboard
+          }
         }, 1000);
       } else {
         setSubmitStatus({
@@ -79,6 +91,7 @@ const Login = () => {
       setIsLoading(false);
     }
   };
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-[#0FA4AF] to-sky-100 px-4 sm:px-6 lg:px-8 py-8">

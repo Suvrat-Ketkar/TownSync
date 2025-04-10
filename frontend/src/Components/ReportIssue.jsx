@@ -135,7 +135,8 @@ const ReportIssue = () => {
       );
 
       if (response.data.success) {
-        setSuccess("Issue reported successfully!");
+        setSuccess("Issue reported and assigned successfully!");
+        // Reset form
         setSelectedCategory("");
         setDescription("");
         setImages([]);

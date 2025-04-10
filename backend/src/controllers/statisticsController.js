@@ -31,8 +31,8 @@ export const updateStatsOnNewComplaint = async (complaint) => {
     // Update issue type distribution
     const issueType = complaint.Issue_Type;
     switch (issueType) {
-      case 'Potholes':
-        stats.issueTypeDistribution.Potholes += 1;
+      case 'Patholes':
+        stats.issueTypeDistribution.Patholes += 1;
         break;
       case 'Street Lights':
         stats.issueTypeDistribution.StreetLights += 1;
@@ -243,7 +243,7 @@ export const generateDailyStatistics = async () => {
     const rejectedComplaints = await Complaint.countDocuments({ Status: 'Rejected' });
     
     // Count complaints by issue type
-    const potholesComplaints = await Complaint.countDocuments({ Issue_Type: 'Potholes' });
+    const patholesComplaints = await Complaint.countDocuments({ Issue_Type: 'Patholes' });
     const streetLightsComplaints = await Complaint.countDocuments({ Issue_Type: 'Street Lights' });
     const garbageComplaints = await Complaint.countDocuments({ Issue_Type: 'Garbage Collection' });
     const waterComplaints = await Complaint.countDocuments({ Issue_Type: 'Water Supply' });
@@ -287,7 +287,7 @@ export const generateDailyStatistics = async () => {
       resolvedComplaints,
       rejectedComplaints,
       issueTypeDistribution: {
-        Potholes: potholesComplaints,
+        Patholes: patholesComplaints,
         StreetLights: streetLightsComplaints,
         GarbageCollection: garbageComplaints,
         WaterSupply: waterComplaints,
