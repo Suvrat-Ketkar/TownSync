@@ -86,57 +86,46 @@ const ReportIssue = () => {
     setLoading(true);
     setError("");
     setSuccess("");
-
+  
     if (!selectedCategory || !description || !location || !address || imageFiles.length === 0) {
       setError("All fields are required, including at least one image and location.");
       setLoading(false);
       return;
     }
-
+  
     try {
       const formData = new FormData();
       formData.append("Issue_Type", selectedCategory);
       formData.append("Issue_Description", description);
-      
-      // Append all image files
-      imageFiles.forEach((file, index) => {
-        formData.append(`images`, file);
-      });
-
+      imageFiles.forEach(file => formData.append("images", file));
       if (selectedCategory === "Other") {
         formData.append("Custom_Issue_Type", description.split(" ")[0]);
       }
-
-
       formData.append("latitude", location.latitude);
       formData.append("longitude", location.longitude);
       formData.append("address", address);
-     
-
-      const token = localStorage.getItem('accessToken');
-      if (!token) {
+  
+      const accessToken = localStorage.getItem('accessToken');
+      if (!accessToken) {
         setError("You must be logged in to report an issue.");
         setLoading(false);
         return;
       }
-
-      const authToken = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
-      const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
-
+      console.log(accessToken)
+  
       const response = await axios.post(
         `${getApiBaseUrl()}/api/v1/complaints/report`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            "Authorization": authToken
+            "Authorization": `Bearer ${accessToken}`,  // 👈 include "Bearer" prefix
           }
         }
       );
-
+  
       if (response.data.success) {
         setSuccess("Issue reported and assigned successfully!");
-        // Reset form
         setSelectedCategory("");
         setDescription("");
         setImages([]);
@@ -151,6 +140,8 @@ const ReportIssue = () => {
       setLoading(false);
     }
   };
+  
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0FA4AF] to-sky-100 py-16 px-6">

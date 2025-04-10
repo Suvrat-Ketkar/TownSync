@@ -1,20 +1,23 @@
-import jwt from "jsonwebtoken";
-import { User }from "../models/users.models.js";
+import jwt from "jsonwebtoken"; 
+import { User } from "../models/users.models.js";
 
 export const authenticateUser = async (req, res, next) => {
   try {
-    const refreshToken = req.cookies?.refreshToken;
+    // Use lowercase 'authorization'
+    const accessToken = req.headers.authorization;
+    console.log("Access Token:", accessToken);
 
-    if (!refreshToken) {
+    if (!accessToken) {
       return res.status(401).json({
         success: false,
-        message: "Unauthorized request - refresh token missing"
+        message: "Unauthorized request - access token missing"
       });
     }
 
-    // Verify refresh token
-    const decoded = jwt.verify(refreshToken, process.env.JWT_SECRET);
+    // Usually token comes in format: Bearer <token>
+    const token = accessToken.split(" ")[1]; // Get just the token
 
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     const user = await User.findById(decoded._id);
 
     if (!user) {
@@ -24,22 +27,13 @@ export const authenticateUser = async (req, res, next) => {
       });
     }
 
-    if (user.refreshToken !== refreshToken) {
-      return res.status(403).json({
-        success: false,
-        message: "Invalid refresh token"
-      });
-    }
-
-    // Attach full user object to req
     req.user = user;
-
     next();
   } catch (error) {
-    console.error("Refresh token auth error:", error.message);
+    console.error("Access token auth error:", error.message);
     return res.status(401).json({
       success: false,
-      message: "Unauthorized - invalid or expired refresh token"
+      message: "Unauthorized - invalid or expired access token"
     });
   }
 };

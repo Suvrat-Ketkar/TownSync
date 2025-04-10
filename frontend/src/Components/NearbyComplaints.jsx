@@ -42,8 +42,8 @@ const NearbyComplaints = () => {
 
   const fetchNearbyComplaints = async (latitude, longitude) => {
     try {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
+      const accessToken = localStorage.getItem("accessToken");
+      if (!accessToken) {
         setError("Authentication required - please log in");
         setLoading(false);
         return;
@@ -56,11 +56,12 @@ const NearbyComplaints = () => {
         return;
       }
 
-      const authToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
       
       // Make API call to fetch nearby complaints with the current radius
       const response = await axios.get(`${apiBaseUrl}/api/v1/complaints/nearby-complaints`, {
-        headers: { Authorization: authToken },
+        headers: { 
+          Authorization: `Bearer ${accessToken}`
+          },
         params: {
           latitude,
           longitude,

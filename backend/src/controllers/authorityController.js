@@ -1,6 +1,6 @@
 import Complaint from "../models/complaints.models.js";
 import Authority from "../models/authority.models.js";
-import { User } from "../models/users.modes.js";
+import { User } from "../models/users.models.js";
 import jwt, { decode } from "jsonwebtoken";
 /*export const acknowledgeComplaint = async (req, res) => {
   try {

@@ -22,11 +22,12 @@ const ComplaintsList = () => {
         const token = user?.token || localStorage.getItem("accessToken");
         const authToken = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "";
-
+        console.log(`${apiBaseUrl}/api/v1/complaints/user`);
         try {
           const res = await axios.get(`${apiBaseUrl}/api/v1/complaints/user`, {
             headers: { Authorization: authToken },
           });
+          console.log(res.data);
           if (res.data.success) {
             setComplaints(res.data.data);
             setLoading(false);
