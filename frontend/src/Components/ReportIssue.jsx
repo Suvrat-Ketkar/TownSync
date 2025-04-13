@@ -8,7 +8,6 @@ import AuthRequired from "../Components/AuthRequired";
 import {getApiBaseUrl} from '../utils/apiBase.jsx'
 const ReportIssue = () => {
   const { user } = useAuth();
-
   const [selectedCategory, setSelectedCategory] = useState("");
   const [description, setDescription] = useState("");
   const [images, setImages] = useState([]);
@@ -22,8 +21,18 @@ const ReportIssue = () => {
   if (!user) {
     return <AuthRequired message="You need to be logged in to report a complaint" />;
   }
-
-
+    //Api to catch location using latitute and longitude
+    useEffect(() => {
+      if (location) {
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${location.latitude}&lon=${location.longitude}`)
+          .then(res => res.json())
+          .then(data => {
+            setAddress(data.display_name);
+          })
+          .catch(err => console.error(err));
+      }
+    }, [location]);
+    
 
   // Function to capture user's current location
   const captureLocation = () => {
@@ -175,11 +184,12 @@ const ReportIssue = () => {
             >
               Use Current Location
             </button>
-            {location && (
+            {address && (
               <p className="text-green-700 mt-2">
-                Location Captured: {location.latitude}, {location.longitude}
+                Location: {address}
               </p>
             )}
+
           </div>
 
           <div className="text-center">

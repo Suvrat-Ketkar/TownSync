@@ -1,16 +1,12 @@
 import mongoose from "mongoose";
-import { DB_NAME } from "../constants/constant.js";
-
-
 const connectDB = async () => {
-    try {       
-        const connectionInstance = await mongoose.connect(`${process.env.MONGODB_URI}`);
-        console.log(`\n MongoDB connected !! DB HOST: ${connectionInstance.connection.host}`);
-    } 
-    catch (error) {
-        console.log("MONGODB connection FAILED ", error);
-        process.exit(1)
-    }
-}
-
+  try {
+    const uri=`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.qcrf9.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+    const connection = await mongoose.connect(uri);
+    console.log(`\n MongoDB connected! Host: ${connection.connection.host}`);
+  } catch (err) {
+    console.error("MongoDB connection FAILED", err);
+    process.exit(1);
+  }
+};
 export default connectDB
