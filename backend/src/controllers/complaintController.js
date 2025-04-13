@@ -91,8 +91,6 @@ export const reportComplaint = async (req, res) => {
     if (latitude && longitude) {
       Location = { type: "Point", coordinates: [parseFloat(longitude), parseFloat(latitude)] };
     }
-
-    // **Find the best authority to assign**
     const assignedAuthority = await Authority.findOne({ department: Issue_Type })
     console.log(`Assigned Authority :${assignedAuthority}`)
     if (!assignedAuthority) {

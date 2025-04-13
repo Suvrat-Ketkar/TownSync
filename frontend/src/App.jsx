@@ -16,11 +16,9 @@ import StatisticsDashboard from "./Components/StatisticsDashboard.jsx";
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import WelcomePage from "./Components/WelcomePage.jsx";
 import Home from "./Components/Home.jsx";
-import { AuthorityDashboard } from "./Components/AuthorityDashboard.jsx"
-import { AuthStatisticsDashboard } from "./Components/AuthStatisticsDashboard.jsx"
-import { AuthProfile } from "./Components/AuthProfile.jsx"
-
-// Wrapper for conditional navbar rendering
+import { AuthorityDashboard } from "./Components/AuthorityDashboard.jsx";
+import { AuthStatisticsDashboard } from "./Components/AuthStatisticsDashboard.jsx";
+import { AuthProfile } from "./Components/AuthProfile.jsx";
 const Layout = ({ children }) => {
   const location = useLocation();
   const isAuthorityPage = location.pathname.startsWith("/authority-dashboard");
